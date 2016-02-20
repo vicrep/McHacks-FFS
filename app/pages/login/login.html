@@ -1,0 +1,29 @@
+<!--
+  Generated template for the LoginPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-content padding class="login">
+    <ion-card text-center>
+        <ion-card-content>
+            <h1>FFS</h1>
+            <p>A social exchange and sale platform for university campuses</p>
+        </ion-card-content>
+    </ion-card>
+    <ion-list>
+        <ion-item>
+            <ion-label floating>Email</ion-label>
+            <ion-input type="email"></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label floating>Password</ion-label>
+            <ion-input type="password"></ion-input>
+        </ion-item>
+        <button block (click)="signin()">Sign In</button>
+        <ion-item>
+            <p>Don't have an account?</p>
+            <button clear item-right (click)="signup()">Click here to sign up!</button>
+        </ion-item>
+    </ion-list>
+</ion-content>
