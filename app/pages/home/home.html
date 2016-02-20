@@ -23,30 +23,25 @@
     </ion-segment>
   </div>
   <ion-card>
-    <ion-item secondary>
-      <ion-avatar item-left>
+    <ion-item>
+      <ion-thumbnail item-left (click)="showImages()">
         <img src="assets/vacuum1.jpg">
-      </ion-avatar>
-      <h2>Vacuum Cleaner</h2>
-      <p>Posted by V. Repkow (4.7<ion-icon name="star"></ion-icon>)</p>
-      <h2 item-right>$20 (OBO)</h2>
+      </ion-thumbnail>
+      <h2><b>Vacuum Cleaner</b></h2>
+      <p>Posted by V. Repkow</p>
+      <div item-right text-right>
+        <h2>$20 (OBO)</h2>
+        <p>(4.7 <ion-icon name="star"></ion-icon>)</p>
+      </div>
     </ion-item>
-    <!--<ion-slides pager>-->
-      <!--<ion-slide>-->
-        <!--<img class="listing-img" src="assets/vacuum1.jpg">-->
-      <!--</ion-slide>-->
-      <!--<ion-slide>-->
-        <!--<img class="listing-img" src="assets/vacuum2.jpg">-->
-      <!--</ion-slide>-->
-    <!--</ion-slides>-->
     <ion-card-content>
       <p>Brand new vaccum, great condition, barely used. Sucks the shit out of anything.</p>
       <ion-note>Listing ends: Feb 25th, 2016</ion-note>
     </ion-card-content>
     <ion-item>
-      <p>Initial: $15</p>
+      <ion-note item-left>Initial: $15</ion-note>
       <p>OBO: $20</p>
-      <button clear large item-right><ion-icon name="arrow-dropup"></ion-icon>Top that OBO</button>
+      <button item-right clear secondary><ion-icon name="arrow-dropup"></ion-icon> Top that OBO</button>
     </ion-item>
   </ion-card>
 </ion-content>

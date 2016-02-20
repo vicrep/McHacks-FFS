@@ -1,20 +1,16 @@
 import {Page, NavController} from 'ionic-framework/ionic';
-import {CustomSearchPage} from '../custom-search/custom-search';
 
 /*
-  Generated class for the FindPage page.
+  Generated class for the CustomSearchPage page.
 
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 */
 @Page({
-  templateUrl: 'build/pages/find/find.html',
+  templateUrl: 'build/pages/custom-search/custom-search.html',
 })
-export class FindPage {
+export class CustomSearchPage {
   constructor(nav: NavController) {
     this.nav = nav;
-  }
-  customSearch() {
-    this.nav.push(CustomSearchPage);
   }
 }
