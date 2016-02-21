@@ -1,6 +1,8 @@
 import {Page, NavController} from 'ionic-framework/ionic';
 import {FireBaseServices} from '../../providers/fire-base-services/fire-base-services'
 import {MainViewPage} from '../main-view/main-view';
+import {LoginPage} from '../login/login';
+
 
 
 
@@ -33,7 +35,7 @@ export class SignupPage {
         this.fireBaseServices.signup(form.controls.emailaddress.value, form.controls.password.value )
         .then(() => {
 			console.log("SignUp Succeeded");
-            this.nav.setRoot(MainViewPage);
+            this.nav.setRoot(LoginPage);
         })
         .catch(() => {
         	console.log("SignUp Failed");

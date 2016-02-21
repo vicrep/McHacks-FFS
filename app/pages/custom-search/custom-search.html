@@ -7,19 +7,21 @@
 <ion-navbar *navbar>
   <ion-title>Custom Search</ion-title>
 </ion-navbar>
-<ion-content padding class="custom-search">
-  <ion-segment>
-    <ion-segment-button value="all">
-      All
-    </ion-segment-button>
-    <ion-segment-button value="free">
-      Free
-    </ion-segment-button>
-    <ion-segment-button value="forsale">
-      For Sale
-    </ion-segment-button>
-  </ion-segment>
+<ion-content class="custom-search">
   <ion-list>
+    <ion-item>
+      <ion-segment secondary>
+        <ion-segment-button value="all">
+          All
+        </ion-segment-button>
+        <ion-segment-button value="free">
+          Free
+        </ion-segment-button>
+        <ion-segment-button value="forsale">
+          For Sale
+        </ion-segment-button>
+      </ion-segment>
+    </ion-item>
     <ion-item>
       <ion-label>Category</ion-label>
       <ion-select [(ngModel)]="category">
@@ -54,9 +56,9 @@
         <ion-option value="name">Name</ion-option>
       </ion-select>
     </ion-item>
+    <button block secondary>
+      <ion-icon name="search"></ion-icon>
+      Search
+    </button>
   </ion-list>
-  <button block secondary>
-    <ion-icon name="search"></ion-icon>
-    Search
-  </button>
 </ion-content>
