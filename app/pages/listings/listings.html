@@ -9,16 +9,17 @@
 </ion-navbar>
 
 <ion-content class="listings">
-  <button fab fab-bottom fab-right secondary (click)="newListing()"><ion-icon name="add"></ion-icon></button>
   <ion-list>
     <ion-list-header>
       <h3>Confirmed listings</h3>
-      <ion-note text-center>(Slide listings for options)</ion-note>
     </ion-list-header>
     <ion-item *ngIf="fbdb.myconfirmedlistings.length == 0"><p>No confirmed listings</p></ion-item>
     <ion-item *ngFor="#listing of fbdb.myconfirmedlistings">
       <h2>{{listing.val().title}} <span primary>${{listing.val().finaloffer.price}}</span></h2>
-      <a button item-right secondary [href]="'tel:' + listing.val().finaloffer.buyerphone"><ion-icon name="call"></ion-icon> Contact Seller</a>
+      <a button secondary [href]="'tel:' + listing.val().finaloffer.buyerphone"><ion-icon name="call"></ion-icon> Contact Seller</a>
+      <div item-right>
+        <h2><ion-icon name="contact"></ion-icon> {{listing.val().finaloffer.buyername}}</h2>
+      </div>
     </ion-item>
     <ion-list-header>
       <h3>Active Listings</h3>
@@ -50,5 +51,7 @@
         </button>
       </ion-item-options>
     </ion-item-sliding>
- </ion-list>
+  </ion-list>
 </ion-content>
+<button fab fab-bottom fab-right secondary (click)="newListing()" style="z-index: 999"><ion-icon name="add"></ion-icon></button>
+

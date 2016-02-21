@@ -25,8 +25,7 @@ export class HomePage {
     console.log('make an offer for ',item);
     let prompt = Alert.create();
     prompt.setTitle('Make a Bid');
-    prompt.setSubTitle('Please enter your best offer for: ' + item);
-    prompt.setMessage('Current highest offer: $10 (asking: $15)');
+    prompt.setSubTitle('Please enter your best offer');
     prompt.addInput({
       type: 'number',
       name: 'amount',
@@ -35,14 +34,12 @@ export class HomePage {
     prompt.addButton({
       text: 'Cancel',
       handler: data => {
-        console.log('Cancel clicked');
       }
     });
     prompt.addButton({
       text: 'Save',
       handler: data => {
       this.fbdb.addOffer(data.amount, item);
-      console.log('Saved clicked');
       }
     });
     this.nav.present(prompt);
