@@ -154,39 +154,26 @@ export class FireBaseServices {
             snapshot.forEach(dataChild => {
                 if (dataChild.val().active) this.toprecentItems.push(dataChild);
           });
-
-
-// for (keyV in data){
-//                 console.log(keyV);
-//                 if(data[keyV].seller == this.user.password.email){
-//                     delete data[keyV];
-//                 }
-//             }
-//             this.toprecentItems=data;
-
         });
+        
         this.offersRef.orderByChild('buyer').equalTo(this.user.password.email).on('value', snapshot => {
-            console.log('offers callback');
             let data = snapshot.val();
-            console.log(data);
-
             this.myOffers=[];
+
             snapshot.forEach(dataChild => {
                   if(dataChild.val().active==true){
                   this.myOffers.push(dataChild);
               }
           });
         });
-
     }
     getListingOffers(offerKey) {
-        this.listingoffers = [];
         this.offersRef.orderByChild('itemkey').equalTo(offerKey).on('value', snapshot => {
+            this.listingoffers = [];
             snapshot.forEach(dataChild => {
                 this.listingoffers.unshift(dataChild);
             });
         })
-
     }
     acceptOffer(offer, key) {
         let listing = this.itemsRef.child(key);
@@ -203,4 +190,3 @@ export class FireBaseServices {
         });
     }
 }
-
