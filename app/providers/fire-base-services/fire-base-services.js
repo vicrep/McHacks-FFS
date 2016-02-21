@@ -22,6 +22,7 @@ export class FireBaseServices {
         this.myinactivelistings = [];
         this.toprecentItems = [];
         this.myOffers = [];
+        this.acceptedOffers = [];
         this.tempItem = null;
         this.listingoffers = [];
         if (this.user) this.initQueries();
@@ -148,6 +149,16 @@ export class FireBaseServices {
                 else this.myinactivelistings.push(dataChild);
             });
         });
+        this.itemsRef.on('value', snapshot => {
+            this.acceptedOffers = [];
+            snapshot.forEach(dataChild => {
+                let val = dataChild.val();
+                console.log(val);
+                if (val.finaloffer && val.active) {
+                    if(val.finaloffer.buyerphone== this.userData.phone) this.acceptedOffers.push(dataChild);
+                }
+            });
+        });
           this.itemsRef.orderByChild('date').limitToFirst(40).on('value', snapshot => {
             let data = snapshot.val();
             this.toprecentItems=[];
@@ -164,6 +175,7 @@ export class FireBaseServices {
                   if(dataChild.val().active==true){
                   this.myOffers.push(dataChild);
               }
+             
           });
         });
     }
