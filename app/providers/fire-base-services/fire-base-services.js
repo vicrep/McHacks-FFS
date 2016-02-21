@@ -18,14 +18,18 @@ export class FireBaseServices {
         this.usersRef = this.dbRef.child("users");
         this.itemsRef = this.dbRef.child("items");
         this.user = this.dbRef.getAuth();
+        this.usersRef.orderByChild('email').equalTo(this.user.password.email).on('value', snapshot => {
+            console.log('user data callback');
+            let data = snapshot.val();
+            this.userData = data[Object.keys(data)[0]];
+        });
     }
 
-    login(emailV, passwordV){
-
+    login(data){
         return new Promise((resolve, reject) => {
             this.dbRef.authWithPassword({
-                email     : emailV,
-                password  : passwordV
+                email     : data.email,
+                password  : data.password
             }, (error, userData) => {
                 if (error) {
                     console.log("Error logging user:", error);
@@ -39,28 +43,31 @@ export class FireBaseServices {
         })
     }
 
-    signup(emailV, passwordV, universityV){
-
-
+    signup(data){
         return new Promise((resolve, reject) => {
             this.dbRef.createUser({
-                email    : emailV,
-                password : passwordV
+                email    : data.email,
+                password : data.password
             }, (error, userData) => {
                 if (error) {
                     console.log("Error creating user:", error);
                     reject();
                 } else {
                     this.usersRef.push().set({
-                        email : emailV,
-                        university : universityV
+                        name: data.name,
+                        email : data.email,
+                        phone: data.phone,
+                        university : data.university,
+                        rating: {
+                            count: 0,
+                            value: 0.0
+                        }
                       });
                     console.log("Successfully created user account with uid:", userData.uid);
                     resolve();
                 }
             });
         })
-
     }
 
     signOut() {

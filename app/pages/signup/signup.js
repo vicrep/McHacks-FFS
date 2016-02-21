@@ -20,7 +20,14 @@ export class SignupPage {
     this.nav = nav;
     this.fireBaseServices = fireBaseServices;
 
-    this.signup = {};
+    this.signup = {
+        name: '',
+        phone: '',
+        email: '',
+        password: '',
+        university: ''
+
+    };
     this.submitted = false;
   }
 
@@ -32,10 +39,10 @@ export class SignupPage {
     if (form.valid) {
     	 if (form.valid) {       
         /* Authenticate User */  
-        this.fireBaseServices.signup(form.controls.emailaddress.value, form.controls.password.value , form.controls.university.value)
+        this.fireBaseServices.signup(this.signup)
         .then(() => {
 			console.log("SignUp Succeeded");
-            this.nav.setRoot(LoginPage);
+            this.nav.setRoot(MainViewPage);
         })
         .catch(() => {
         	console.log("SignUp Failed");
