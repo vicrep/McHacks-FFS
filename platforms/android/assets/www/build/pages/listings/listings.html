@@ -15,10 +15,11 @@
     </ion-list-header>
     <ion-item *ngIf="fbdb.myconfirmedlistings.length == 0"><p>No confirmed listings</p></ion-item>
     <ion-item *ngFor="#listing of fbdb.myconfirmedlistings">
-      <h2>{{listing.val().title}} <span primary>${{listing.val().finaloffer.price}}</span></h2>
+      <h2>{{listing.val().title}}</h2>
       <a button secondary [href]="'tel:' + listing.val().finaloffer.buyerphone"><ion-icon name="call"></ion-icon> Contact Buyer</a>
       <div item-right>
-        <h2><ion-icon name="contact"></ion-icon> {{listing.val().finaloffer.buyername}}</h2>
+        <h2 primary text-right>${{listing.val().finaloffer.price}}</h2>
+        <h2 text-right><ion-icon name="contact"></ion-icon> {{listing.val().finaloffer.buyername}}</h2>
       </div>
     </ion-item>
     <ion-list-header>
