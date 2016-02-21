@@ -1,0 +1,33 @@
+<!--
+  Generated template for the LoginPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-content padding class="login">
+            <h1 text-center light>FFS</h1>
+            <p text-center light>A social exchange and sale platform for university campuses</p>
+    <br>
+    <form #loginForm="ngForm" novalidate>
+    <ion-card class="signin-container">
+            <ion-item>
+                <ion-label floating>Email</ion-label>
+                <ion-input [(ngModel)]="login.email" ngControl="email" type="email" #email="ngForm" required>
+                </ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>Password</ion-label>
+                <ion-input [(ngModel)]="login.password" ngControl="password" type="password" #password="ngForm" required>
+                </ion-input>
+            </ion-item>
+            <div padding>
+                <button block secondary (click)="onLogin(loginForm)">Sign In</button>
+            </div>
+            <ion-item>
+                <p text-center>Don't have an account?</p>
+                <button clear secondary block (click)="onSignup()">Click here to sign up!</button>
+            </ion-item>
+    </ion-card>
+    </form>
+
+</ion-content>

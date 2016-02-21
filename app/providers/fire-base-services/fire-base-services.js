@@ -34,7 +34,7 @@ export class FireBaseServices {
                     console.log("Error logging user:", error);
                     reject();
                 } else {
-                    this.userEmail = emailV;
+                    this.userEmail = data.email;
                     console.log("Successfully logged user with uid:", userData.uid);
                     this.user = this.dbRef.getAuth();
                     this.initQueries();
