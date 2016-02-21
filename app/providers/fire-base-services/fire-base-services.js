@@ -75,12 +75,11 @@ export class FireBaseServices {
         this.dbRef.unauth();
     }
 
-    addItem(title, category, intitialPrice, isBid, description){
+    addItem(title, category, intitialPrice, description){
         this.itemsRef.push().set({
             title : title,
             category : category ,
             askingprice : intitialPrice,
-            isBid : isBid,
             description : description,
             seller : this.user.password.email
         });
@@ -90,7 +89,6 @@ export class FireBaseServices {
             title : title,
             category : category ,
             askingprice : 0,
-            isBid : false,
             description : description,
             seller : this.user.password.email
         });
@@ -100,6 +98,11 @@ export class FireBaseServices {
             console.log('user data callback');
             let data = snapshot.val();
             this.userData = data[Object.keys(data)[0]];
+        });
+        this.itemsRef.orderByChild('email').equalTo(this.user.password.email).on('value', snapshot => {
+            console.log('items data callback');
+            let data = snapshot.val();
+            // this.userData = data[Object.keys(data)[0]];
         });
     }
 

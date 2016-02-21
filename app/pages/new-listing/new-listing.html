@@ -45,18 +45,10 @@
       <ion-label>Item price</ion-label>
       <ion-input [(ngModel)]="newlisting.initialprice" ngControl="initialprice" type="currency" #initialprice="ngForm" required ></ion-input>
     </ion-item>
-<<<<<<< HEAD
-    <ion-item *ngIf="newlisting.listingType == 'sale'">
-      <ion-label>This item is OBO</ion-label>
-      <ion-toggle secondary [(ngModel)]="newlisting.obo" ngControl="obo"  #obo="ngForm" required ></ion-toggle>
-    </ion-item>
     </ion-list>
     <div padding>
       <button block (click)="onAddingItem(newlistingForm)">Sign Up</button>
     </div>
   </form>
-  
-=======
-  </ion-list>
->>>>>>> 419c92d00413bc4ebb88d40187f29bd750dd69ca
+
 </ion-content>

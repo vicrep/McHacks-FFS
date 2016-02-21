@@ -29,7 +29,6 @@ export class NewListingPage {
              this.fireBaseServices.addItem(form.controls.itemname.value, 
                                       form.controls.category.value , 
                                       form.controls.initialprice.value,
-                                      form.controls.obo.value,
                                       form.controls.description.value);
         }
         else{
