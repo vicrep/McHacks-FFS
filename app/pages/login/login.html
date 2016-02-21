@@ -12,18 +12,23 @@
         </ion-card-content>
     </ion-card>
     <ion-list>
-        <ion-item>
-            <ion-label floating>Email</ion-label>
-            <ion-input type="email"></ion-input>
-        </ion-item>
-        <ion-item>
-            <ion-label floating>Password</ion-label>
-            <ion-input type="password"></ion-input>
-        </ion-item>
-        <button block (click)="signin()">Sign In</button>
-        <ion-item>
-            <p>Don't have an account?</p>
-            <button clear secondary item-right (click)="signup()">Click here to sign up!</button>
-        </ion-item>
+        <form #loginForm="ngForm" novalidate>
+
+            <ion-item>
+                <ion-label floating>Email</ion-label>
+                <ion-input [(ngModel)]="login.username" ngControl="username" type="email" #username="ngForm" required>
+                </ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>Password</ion-label>
+                <ion-input [(ngModel)]="login.password" ngControl="password" type="password" #password="ngForm" required>
+                </ion-input>
+            </ion-item>
+            <button block (click)="onLogin(loginForm)">Sign In</button>
+            <ion-item>
+                <p>Don't have an account?</p>
+                <button clear secondary item-right (click)="onSignup()">Click here to sign up!</button>
+            </ion-item>
+     </form>
     </ion-list>
 </ion-content>

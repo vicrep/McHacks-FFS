@@ -10,22 +10,25 @@
 
 <ion-content padding class="signup">
   <ion-list>
-    <ion-item>
-      <ion-label stacked>Email</ion-label>
-      <ion-input type="email" placeholder="Please enter your university email"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label stacked>Password</ion-label>
-      <ion-input type="password" placeholder="at least 6 characters"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label>University</ion-label>
-      <ion-select [(ngModel)]="university">
-        <ion-option value="mcgill" checked="true">McGill</ion-option>
-        <ion-option value="concordia">Concordia</ion-option>
-        <ion-option disabled>More coming soon!</ion-option>
-      </ion-select>
-    </ion-item>
-    <button block>Sign Up</button>
+    <form #signupForm="ngForm" novalidate>
+      <ion-item>
+        <ion-label stacked>Email</ion-label>
+        <ion-input [(ngModel)]="signup.emailaddress" ngControl="emailaddress" type="email" #emailaddress="ngForm" required placeholder="Please enter your university email">
+      </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Password</ion-label>
+        <ion-input [(ngModel)]="signup.password" ngControl="password" type="password" #password="ngForm" required placeholder="at least 6 characters"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>University</ion-label>
+        <ion-select [(ngModel)]="university">
+          <ion-option value="mcgill" checked="true">McGill</ion-option>
+          <ion-option value="concordia">Concordia</ion-option>
+          <ion-option disabled>More coming soon!</ion-option>
+        </ion-select>
+      </ion-item>
+      <button block (click)="onSignup(signupForm)">Sign In</button>
+  </form>
   </ion-list>
 </ion-content>
