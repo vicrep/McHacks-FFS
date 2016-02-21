@@ -25,7 +25,7 @@ export class NewListingPage {
     console.log(form);
        if (form.valid) {       
         /* Authenticate User */  
-        if(form.controls.itemname.value == "free"){
+        if(form.controls.listingType.value == "sale"){
              this.fireBaseServices.addItem(form.controls.itemname.value, 
                                       form.controls.category.value , 
                                       form.controls.initialprice.value,

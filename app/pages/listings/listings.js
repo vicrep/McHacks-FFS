@@ -1,6 +1,8 @@
 import {Page, NavController} from 'ionic-framework/ionic';
 import {NewListingPage} from '../new-listing/new-listing';
 import {ListingOffersPage} from '../listing-offers/listing-offers';
+import {FireBaseServices} from '../../providers/fire-base-services/fire-base-services';
+
 
 /*
   Generated class for the ListingsPage page.
@@ -12,8 +14,11 @@ import {ListingOffersPage} from '../listing-offers/listing-offers';
   templateUrl: 'build/pages/listings/listings.html',
 })
 export class ListingsPage {
-  constructor(nav: NavController) {
+  constructor(nav: NavController, FireBaseServices: FireBaseServices) {
     this.nav = nav;
+    this.fbdb = FireBaseServices;
+    this.mylistings = this.fbdb.mylistings;
+    this.mykeys = Object.keys(this.mylistings);
   }
   newListing() {
     this.nav.push(NewListingPage);
@@ -21,6 +26,9 @@ export class ListingsPage {
 
   viewOffers(data) {
     this.nav.push(ListingOffersPage, {offers: data});
+  }
+  getKeys (yourlist){
+    return Object.keys(yourlist);
   }
 
 }

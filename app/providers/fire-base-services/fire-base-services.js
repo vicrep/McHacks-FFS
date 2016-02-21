@@ -18,6 +18,7 @@ export class FireBaseServices {
         this.usersRef = this.dbRef.child("users");
         this.itemsRef = this.dbRef.child("items");
         this.user = this.dbRef.getAuth();
+        this.mylistings = [];
         if (this.user) this.initQueries();
     }
 
@@ -76,21 +77,29 @@ export class FireBaseServices {
     }
 
     addItem(title, category, intitialPrice, description){
+        let d = new Date();
+        let n = d.toLocaleString();
         this.itemsRef.push().set({
             title : title,
             category : category ,
             askingprice : intitialPrice,
             description : description,
-            seller : this.user.password.email
+            seller : this.user.password.email,
+            bestoffer : intitialPrice,
+            date : n
         });
     }
     addFreeItem(title, category, description){
+        let d = new Date();
+        let n = d.toLocaleString();
         this.itemsRef.push().set({
             title : title,
             category : category ,
             askingprice : 0,
             description : description,
             seller : this.user.password.email
+            bestoffer : 0,
+            date : n
         });
     }
     initQueries() {
@@ -99,9 +108,16 @@ export class FireBaseServices {
             let data = snapshot.val();
             this.userData = data[Object.keys(data)[0]];
         });
-        this.itemsRef.orderByChild('email').equalTo(this.user.password.email).on('value', snapshot => {
+        this.itemsRef.orderByChild('seller').equalTo(this.user.password.email).on('value', snapshot => {
             console.log('items data callback');
             let data = snapshot.val();
+            this.mylistings=data;
+            console.log(data);
+            // for (i = 0; i < Object.keys(data).length; i++) { 
+            //     this.mylistings.push(data[Object.keys(data)[i]]);
+            //     console.log(data[Object.keys(data)[i]]);
+            // }
+            // console.log(data[Object.keys(data)[1]]);
             // this.userData = data[Object.keys(data)[0]];
         });
     }
