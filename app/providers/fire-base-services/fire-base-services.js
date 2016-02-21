@@ -18,6 +18,7 @@ export class FireBaseServices {
         this.usersRef = this.dbRef.child("users");
         this.itemsRef = this.dbRef.child("items");
         this.user = this.dbRef.getAuth();
+        this.mylistings = [];
         this.usersRef.orderByChild('email').equalTo(this.user.password.email).on('value', snapshot => {
             console.log('user data callback');
             let data = snapshot.val();
@@ -78,24 +79,30 @@ export class FireBaseServices {
         this.itemsRef.push().set({
             title : title,
             category : category ,
-            intitialPrice : intitialPrice,
+            askingprice : intitialPrice,
             isBid : isBid,
             description : description,
-            seller : this.userEmail
+            seller : this.user.password.email
         });
+        this.getMyListings();
     }
     addFreeItem(title, category, description){
         this.itemsRef.push().set({
             title : title,
             category : category ,
-            intitialPrice : 0,
+            askingprice : 0,
             isBid : false,
             description : description,
-            seller : this.userEmail
+            seller : this.user.password.email
         });
+        this.getMyListings();
     }
     getMyListings(){
-        
+           this.itemsRef.orderByChild('seller').equalTo(this.user.password.email).on('value', snapshot => {
+            console.log('user data callback');
+            let data = snapshot.val();
+            console.log( data[Object.keys(data)[0]]);
+        });
     }
 
 }
