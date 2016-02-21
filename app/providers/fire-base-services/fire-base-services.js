@@ -18,13 +18,9 @@ export class FireBaseServices {
         this.usersRef = this.dbRef.child("users");
         this.itemsRef = this.dbRef.child("items");
         this.user = this.dbRef.getAuth();
-        this.mylistings = [];
-        this.usersRef.orderByChild('email').equalTo(this.user.password.email).on('value', snapshot => {
-            console.log('user data callback');
-            let data = snapshot.val();
-            this.userData = data[Object.keys(data)[0]];
-        });
+        if (this.user) this.initQueries();
     }
+
 
     login(data){
         return new Promise((resolve, reject) => {
@@ -38,6 +34,8 @@ export class FireBaseServices {
                 } else {
                     this.userEmail = emailV;
                     console.log("Successfully logged user with uid:", userData.uid);
+                    this.user = this.dbRef.getAuth();
+                    this.initQueries();
                     resolve();
                 }
             });
@@ -64,6 +62,8 @@ export class FireBaseServices {
                             value: 0.0
                         }
                       });
+                    this.initQueries();
+                    this.user = this.dbRef.getAuth();
                     console.log("Successfully created user account with uid:", userData.uid);
                     resolve();
                 }
@@ -84,7 +84,6 @@ export class FireBaseServices {
             description : description,
             seller : this.user.password.email
         });
-        this.getMyListings();
     }
     addFreeItem(title, category, description){
         this.itemsRef.push().set({
@@ -95,13 +94,12 @@ export class FireBaseServices {
             description : description,
             seller : this.user.password.email
         });
-        this.getMyListings();
     }
-    getMyListings(){
-           this.itemsRef.orderByChild('seller').equalTo(this.user.password.email).on('value', snapshot => {
+    initQueries() {
+        this.usersRef.orderByChild('email').equalTo(this.user.password.email).on('value', snapshot => {
             console.log('user data callback');
             let data = snapshot.val();
-            console.log( data[Object.keys(data)[0]]);
+            this.userData = data[Object.keys(data)[0]];
         });
     }
 

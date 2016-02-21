@@ -16,14 +16,15 @@ export class BidsPage {
 
   editBid(item) {
     let prompt = Alert.create();
-    prompt.setTitle('Make a Bid');
+    prompt.setTitle('Edit offer');
     prompt.setSubTitle('Please enter your best offer for: ' + item);
-    prompt.setMessage('You will automatically over-bid other bids until you reach your highest offer');
+    prompt.setMessage('Current highest offer: $10 (asking: $15)');
     prompt.addInput({
       type: 'number',
       name: 'amount',
-      placeholder: 'Amount (current OBO: $10)'
-    });
+      value: 10
+
+  });
     prompt.addButton({
       text: 'Cancel',
       handler: data => {
