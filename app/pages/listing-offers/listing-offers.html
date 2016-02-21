@@ -5,16 +5,18 @@
   Ionic pages and navigation.
 -->
 <ion-navbar *navbar>
-  <ion-title>Offers</ion-title>
+  <ion-title>Offers for {{name}}</ion-title>
 </ion-navbar>
 
-<ion-content padding class="listing-offers">
+<ion-content class="listing-offers">
   <ion-list>
-    <ion-item *ngFor="#listing of fbdb.myOffers;">
-      <h1 item-left><ion-icon name="contact"></ion-icon></h1>
-      <h2 text-center>Offer: ${{listing.val().offerprice}}</h2>
-      <p text-center>4.5 <ion-icon name="star"></ion-icon></p>
-      <button item-right primary>Accept Offer</button>
+    <ion-item *ngFor="#offer of fbdb.listingoffers">
+      <ion-avatar item-left>
+        <img src="assets/person.png">
+      </ion-avatar>
+      <h2>Offer: ${{offer.val().offerprice}}</h2>
+      <p>4.5 <ion-icon name="star"></ion-icon></p>
+      <button item-right primary (click)="acceptOffer(offer, key)">Accept Offer</button>
     </ion-item>
   </ion-list>
 </ion-content>

@@ -10,7 +10,7 @@
 <ion-content class="custom-search">
   <ion-list>
     <ion-item>
-      <ion-segment secondary>
+      <ion-segment secondary [(ngModel)]="searchdata.type">
         <ion-segment-button value="all">
           All
         </ion-segment-button>
@@ -24,7 +24,7 @@
     </ion-item>
     <ion-item>
       <ion-label>Category</ion-label>
-      <ion-select [(ngModel)]="category">
+      <ion-select [(ngModel)]="searchdata.category">
         <ion-option value="all" checked="true">All</ion-option>
         <ion-option value="clothing">Clothing</ion-option>
         <ion-option value="books">Books</ion-option>
@@ -36,19 +36,19 @@
     </ion-item>
     <ion-item>
       <ion-label>Minimum Price</ion-label>
-      <ion-input type="number" placeholder="optional"></ion-input>
+      <ion-input [(ngModel)]="searchdata.minprice" type="number" placeholder="optional"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label>Maximum Price</ion-label>
-      <ion-input type="number" placeholder="optional"></ion-input>
+      <ion-input [(ngModel)]="searchdata.maxprice" type="number" placeholder="optional"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label>Search term</ion-label>
-      <ion-input type="text" placeholder="optional"></ion-input>
+      <ion-input [(ngModel)]="searchdata.searchstr" type="text" placeholder="optional"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label>Sort by</ion-label>
-      <ion-select [(ngModel)]="sort">
+      <ion-select [(ngModel)]="searchdata.sort">
         <ion-option value="newest" checked="true">Newest First</ion-option>
         <ion-option value="oldest">Oldest First</ion-option>
         <ion-option value="lowestPrice">Lowest Price</ion-option>
@@ -56,7 +56,7 @@
         <ion-option value="name">Name</ion-option>
       </ion-select>
     </ion-item>
-    <button block secondary>
+    <button block secondary (click)="getItems()">
       <ion-icon name="search"></ion-icon>
       Search
     </button>

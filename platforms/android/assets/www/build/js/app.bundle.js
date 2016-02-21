@@ -62291,8 +62291,8 @@
 	        this.usersRef = this.dbRef.child("users");
 	        this.itemsRef = this.dbRef.child("items");
 	        this.user = this.dbRef.getAuth();
-	        this.mylistings = {};
-	        this.toprecentItems = {};
+	        this.mylistings = [];
+	        this.toprecentItems = [];
 	        if (this.user)
 	            this.initQueries();
 	    }
@@ -62373,15 +62373,18 @@
 	        });
 	        this.itemsRef.orderByChild('seller').equalTo(this.user.password.email).on('value', function (snapshot) {
 	            console.log('items data callback');
-	            var data = snapshot.val();
-	            _this.mylistings = data;
-	            console.log(data);
+	            _this.mylistings = [];
+	            snapshot.forEach(function (dataChild) {
+	                _this.mylistings.push(dataChild.val());
+	            });
 	        });
 	        this.itemsRef.orderByChild('date').limitToFirst(40).on('value', function (snapshot) {
 	            console.log('home items data callback');
-	            var data = snapshot.val();
-	            _this.toprecentItems = data;
-	            console.log(data);
+	            _this.toprecentItems = [];
+	            snapshot.forEach(function (dataChild) {
+	                _this.toprecentItems.push(dataChild.val());
+	            });
+	            console.log(_this.toprecentArray);
 	        });
 	    };
 	    FireBaseServices = __decorate([
@@ -62488,7 +62491,7 @@
 	    };
 	    HomePage = __decorate([
 	        ionic_1.Page({
-	            templateUrl: 'build/pages/home/home.html',
+	            templateUrl: 'build/pages/home/home.html'
 	        }), 
 	        __metadata('design:paramtypes', [ionic_1.NavController, (typeof (_a = typeof fire_base_services_1.FireBaseServices !== 'undefined' && fire_base_services_1.FireBaseServices) === 'function' && _a) || Object])
 	    ], HomePage);

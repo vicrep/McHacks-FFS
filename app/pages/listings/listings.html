@@ -7,27 +7,39 @@
 <ion-navbar *navbar primary>
   <ion-title>My Listings</ion-title>
 </ion-navbar>
+
 <ion-content class="listings">
   <button fab fab-bottom fab-right secondary (click)="newListing()"><ion-icon name="add"></ion-icon></button>
   <ion-list>
     <ion-list-header>
-      Slide the listings to reveal options
+      <h3>Confirmed listings</h3>
+      <ion-note text-center>(Slide listings for options)</ion-note>
     </ion-list-header>
+    <ion-item *ngIf="fbdb.myconfirmedlistings.length == 0"><p>No confirmed listings</p></ion-item>
+    <ion-item *ngFor="#listing of fbdb.myconfirmedlistings">
+      <h2>{{listing.val().title}} <span primary>${{listing.val().finaloffer.price}}</span></h2>
+      <a button item-right secondary [href]="'tel:' + listing.val().finaloffer.phone"><ion-icon name="call"></ion-icon> Contact Seller</a>
+    </ion-item>
+    <ion-list-header>
+      <h3>Active Listings</h3>
+      <ion-note text-center>(Slide listings for options)</ion-note>
+    </ion-list-header>
+    <ion-item *ngIf="fbdb.mylistings.length == 0"><p>No active listings</p></ion-item>
     <ion-item-sliding *ngFor="#listing of fbdb.mylistings">
       <ion-item>
         <ion-thumbnail item-left>
-          <img src="assets/vacuum1.jpg">
+          <img [src]="listing.val().img">
         </ion-thumbnail>
-        <h2>{{listing.title}}</h2>
-        <p>Started {{listing.date}}</p>
+        <h2>{{listing.val().title}}</h2>
+        <p>{{listing.val().date}}</p>
         <div item-right>
-          <p text-right>Asking offer: ${{listing.askingprice}}</p>
-          <p text-right>Best offer: ${{listing.bestoffer}}</p>
+          <p text-right>Asking offer: ${{listing.val().askingprice}}</p>
+          <p text-right>Best offer: ${{listing.val().bestoffer}}</p>
           <p text-right><ion-icon name="people"></ion-icon> 3</p>
         </div>
       </ion-item>
       <ion-item-options>
-        <button primary (click)="viewOffers('Vacuum Cleaner')">
+        <button primary (click)="viewOffers(listing)">
           <ion-icon name="people"></ion-icon> Offers
         </button>
         <button secondary>
