@@ -62291,6 +62291,8 @@
 	        this.usersRef = this.dbRef.child("users");
 	        this.itemsRef = this.dbRef.child("items");
 	        this.user = this.dbRef.getAuth();
+	        this.mylistings = {};
+	        this.toprecentItems = {};
 	        if (this.user)
 	            this.initQueries();
 	    }
@@ -62348,22 +62350,18 @@
 	    FireBaseServices.prototype.signOut = function () {
 	        this.dbRef.unauth();
 	    };
-	    FireBaseServices.prototype.addItem = function (title, category, intitialPrice, description) {
+	    FireBaseServices.prototype.addItem = function (data) {
+	        var d = new Date();
+	        var n = d.toLocaleString();
 	        this.itemsRef.push().set({
-	            title: title,
-	            category: category,
-	            askingprice: intitialPrice,
-	            description: description,
-	            seller: this.user.password.email
-	        });
-	    };
-	    FireBaseServices.prototype.addFreeItem = function (title, category, description) {
-	        this.itemsRef.push().set({
-	            title: title,
-	            category: category,
-	            askingprice: 0,
-	            description: description,
-	            seller: this.user.password.email
+	            title: data.itemname,
+	            category: data.category,
+	            askingprice: data.initialprice,
+	            description: data.description,
+	            seller: this.user.password.email,
+	            bestoffer: 0,
+	            date: n,
+	            img: data.img
 	        });
 	    };
 	    FireBaseServices.prototype.initQueries = function () {
@@ -62373,10 +62371,17 @@
 	            var data = snapshot.val();
 	            _this.userData = data[Object.keys(data)[0]];
 	        });
-	        this.itemsRef.orderByChild('email').equalTo(this.user.password.email).on('value', function (snapshot) {
+	        this.itemsRef.orderByChild('seller').equalTo(this.user.password.email).on('value', function (snapshot) {
 	            console.log('items data callback');
 	            var data = snapshot.val();
-	            // this.userData = data[Object.keys(data)[0]];
+	            _this.mylistings = data;
+	            console.log(data);
+	        });
+	        this.itemsRef.orderByChild('date').limitToFirst(40).on('value', function (snapshot) {
+	            console.log('home items data callback');
+	            var data = snapshot.val();
+	            _this.toprecentItems = data;
+	            console.log(data);
 	        });
 	    };
 	    FireBaseServices = __decorate([
@@ -62441,6 +62446,7 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var ionic_1 = __webpack_require__(5);
+	var fire_base_services_1 = __webpack_require__(360);
 	/*
 	  Generated class for the HomePage page.
 
@@ -62448,10 +62454,14 @@
 	  Ionic pages and navigation.
 	*/
 	var HomePage = (function () {
-	    function HomePage(nav) {
+	    function HomePage(nav, FireBaseServices) {
 	        this.nav = nav;
 	        this.listingType = 'all';
+	        this.fbdb = FireBaseServices;
 	    }
+	    HomePage.prototype.getKeys = function (yourlist) {
+	        return Object.keys(yourlist);
+	    };
 	    HomePage.prototype.makeBid = function (item) {
 	        var prompt = ionic_1.Alert.create();
 	        prompt.setTitle('Make a Bid');
@@ -62480,9 +62490,10 @@
 	        ionic_1.Page({
 	            templateUrl: 'build/pages/home/home.html',
 	        }), 
-	        __metadata('design:paramtypes', [ionic_1.NavController])
+	        __metadata('design:paramtypes', [ionic_1.NavController, (typeof (_a = typeof fire_base_services_1.FireBaseServices !== 'undefined' && fire_base_services_1.FireBaseServices) === 'function' && _a) || Object])
 	    ], HomePage);
 	    return HomePage;
+	    var _a;
 	})();
 	exports.HomePage = HomePage;
 
@@ -62636,6 +62647,7 @@
 	var ionic_1 = __webpack_require__(5);
 	var new_listing_1 = __webpack_require__(367);
 	var listing_offers_1 = __webpack_require__(385);
+	var fire_base_services_1 = __webpack_require__(360);
 	/*
 	  Generated class for the ListingsPage page.
 
@@ -62643,8 +62655,9 @@
 	  Ionic pages and navigation.
 	*/
 	var ListingsPage = (function () {
-	    function ListingsPage(nav) {
+	    function ListingsPage(nav, FireBaseServices) {
 	        this.nav = nav;
+	        this.fbdb = FireBaseServices;
 	    }
 	    ListingsPage.prototype.newListing = function () {
 	        this.nav.push(new_listing_1.NewListingPage);
@@ -62652,13 +62665,17 @@
 	    ListingsPage.prototype.viewOffers = function (data) {
 	        this.nav.push(listing_offers_1.ListingOffersPage, { offers: data });
 	    };
+	    ListingsPage.prototype.getKeys = function (yourlist) {
+	        return Object.keys(yourlist);
+	    };
 	    ListingsPage = __decorate([
 	        ionic_1.Page({
 	            templateUrl: 'build/pages/listings/listings.html',
 	        }), 
-	        __metadata('design:paramtypes', [ionic_1.NavController])
+	        __metadata('design:paramtypes', [ionic_1.NavController, (typeof (_a = typeof fire_base_services_1.FireBaseServices !== 'undefined' && fire_base_services_1.FireBaseServices) === 'function' && _a) || Object])
 	    ], ListingsPage);
 	    return ListingsPage;
+	    var _a;
 	})();
 	exports.ListingsPage = ListingsPage;
 
@@ -62699,12 +62716,9 @@
 	        console.log(form);
 	        if (form.valid) {
 	            /* Authenticate User */
-	            if (form.controls.itemname.value == "free") {
-	                this.fireBaseServices.addItem(form.controls.itemname.value, form.controls.category.value, form.controls.initialprice.value, form.controls.description.value);
-	            }
-	            else {
-	                this.fireBaseServices.addFreeItem(form.controls.itemname.value, form.controls.category.value, form.controls.description.value);
-	            }
+	            if (form.controls.listingType.value == "free")
+	                this.newlisting.initialprice = 0;
+	            this.fireBaseServices.addItem(this.newlisting);
 	            this.nav.pop();
 	        }
 	    };

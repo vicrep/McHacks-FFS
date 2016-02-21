@@ -13,16 +13,16 @@
     <ion-list-header>
       Slide the listings to reveal options
     </ion-list-header>
-    <ion-item-sliding>
+    <ion-item-sliding *ngFor="#listing of getKeys(fbdb.mylistings)">
       <ion-item>
         <ion-thumbnail item-left>
           <img src="assets/vacuum1.jpg">
         </ion-thumbnail>
-        <h2>Vacuum Cleaner</h2>
-        <p>Started Feb 25th, 2016</p>
+        <h2>{{fbdb.mylistings[listing].title}}</h2>
+        <p>Started {{fbdb.mylistings[listing].date}}</p>
         <div item-right>
-          <p text-right>Asking offer: $15</p>
-          <p text-right>Best offer: $20</p>
+          <p text-right>Asking offer: ${{fbdb.mylistings[listing].askingprice}}</p>
+          <p text-right>Best offer: ${{fbdb.mylistings[listing].bestoffer}}</p>
           <p text-right><ion-icon name="people"></ion-icon> 3</p>
         </div>
       </ion-item>
@@ -38,5 +38,5 @@
         </button>
       </ion-item-options>
     </ion-item-sliding>
-  </ion-list>
+ </ion-list>
 </ion-content>

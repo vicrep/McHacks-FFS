@@ -77,30 +77,18 @@ export class FireBaseServices {
         this.dbRef.unauth();
     }
 
-    addItem(title, category, intitialPrice, description){
+    addItem(data){
         let d = new Date();
         let n = d.toLocaleString();
         this.itemsRef.push().set({
-            title : title,
-            category : category ,
-            askingprice : intitialPrice,
-            description : description,
+            title : data.itemname,
+            category : data.category ,
+            askingprice : data.initialprice,
+            description : data.description,
             seller : this.user.password.email,
-            bestoffer : intitialPrice,
-            date : n
-        });
-    }
-    addFreeItem(title, category, description){
-        let d = new Date();
-        let n = d.toLocaleString();
-        this.itemsRef.push().set({
-            title : title,
-            category : category ,
-            askingprice : 0,
-            description : description,
-            seller : this.user.password.email
             bestoffer : 0,
-            date : n
+            date : n,
+            img: data.img
         });
     }
     initQueries() {
@@ -111,15 +99,18 @@ export class FireBaseServices {
         });
         this.itemsRef.orderByChild('seller').equalTo(this.user.password.email).on('value', snapshot => {
             console.log('items data callback');
-            let data = snapshot.val();
-            this.mylistings=data;
-            console.log(data);
+            this.mylistings=[];
+            snapshot.forEach(dataChild => {
+                this.mylistings.push(dataChild.val());
+            });
         });
           this.itemsRef.orderByChild('date').limitToFirst(40).on('value', snapshot => {
             console.log('home items data callback');
-            let data = snapshot.val();
-            this.toprecentItems=data;
-            console.log(data);
+            this.toprecentItems=[];
+              snapshot.forEach(dataChild => {
+                  this.toprecentItems.push(dataChild.val());
+          });
+            console.log(this.toprecentArray);
         });
     }
 

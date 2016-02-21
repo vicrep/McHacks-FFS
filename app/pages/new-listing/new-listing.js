@@ -28,18 +28,10 @@ export class NewListingPage {
     console.log(form);
        if (form.valid) {       
         /* Authenticate User */  
-        if(form.controls.listingType.value == "sale"){
-             this.fireBaseServices.addItem(form.controls.itemname.value, 
-                                      form.controls.category.value , 
-                                      form.controls.initialprice.value,
-                                      form.controls.description.value);
-        }
-        else{
-           this.fireBaseServices.addFreeItem(form.controls.itemname.value, 
-                                      form.controls.category.value , 
-                                      form.controls.description.value);
-        }
-        this.nav.pop();
+        if(form.controls.listingType.value == "free") this.newlisting.initialprice = 0;
+           this.fireBaseServices.addItem(this.newlisting);
+
+           this.nav.pop();
       }
   }
 
