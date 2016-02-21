@@ -5,7 +5,7 @@
   Ionic pages and navigation.
 -->
 <ion-navbar *navbar primary>
-  <ion-title>My Bids</ion-title>
+  <ion-title>My Offers</ion-title>
 </ion-navbar>
 
 <ion-content class="bids">
@@ -23,16 +23,15 @@
     </ion-item>
     <ion-card-content>
       <p>Brand new vaccum, great condition, barely used. Sucks the shit out of anything.</p>
-      <ion-note>Listing ends: Feb 25th, 2016</ion-note>
     </ion-card-content>
     <ion-item>
-      <ion-note item-left>Initial: $15</ion-note>
-      <p text-center>Current OBO: $20</p>
-      <p item-right>My OBO: $25</p>
+      <p item-left>Highest offer: $20</p>
+      <p text-center><ion-icon name="people"> 3</ion-icon></p>
+      <p item-right>My offer: $25</p>
     </ion-item>
     <ion-item>
-      <button item-left clear secondary (click)="editBid('Vacuum Cleaner')"><ion-icon name="arrow-dropup"></ion-icon> Edit my OBO</button>
-      <button item-right clear danger><ion-icon name="close"></ion-icon> Cancel my OBO</button>
+      <button item-left clear secondary (click)="editBid('Vacuum Cleaner')"><ion-icon name="arrow-dropup"></ion-icon> Edit my offer</button>
+      <button item-right clear danger><ion-icon name="close"></ion-icon> Cancel my offer</button>
     </ion-item>
   </ion-card>
 </ion-content>

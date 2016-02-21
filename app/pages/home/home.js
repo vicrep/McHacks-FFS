@@ -18,11 +18,11 @@ export class HomePage {
     let prompt = Alert.create();
     prompt.setTitle('Make a Bid');
     prompt.setSubTitle('Please enter your best offer for: ' + item);
-    prompt.setMessage('You will automatically over-bid other bids until you reach your highest offer');
+    prompt.setMessage('Current highest offer: $10 (asking: $15)');
     prompt.addInput({
       type: 'number',
       name: 'amount',
-      placeholder: 'Amount (current OBO: $10)'
+      placeholder: 'Amount (whole)'
     });
     prompt.addButton({
       text: 'Cancel',

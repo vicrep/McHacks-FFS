@@ -47,9 +47,5 @@
       <ion-label>Item price</ion-label>
       <ion-input type="currency"></ion-input>
     </ion-item>
-    <ion-item *ngIf="data.listingType == 'sale'">
-      <ion-label>This item is OBO</ion-label>
-      <ion-toggle secondary [(ngModel)]="data.obo"></ion-toggle>
-    </ion-item>
   </ion-list>
 </ion-content>

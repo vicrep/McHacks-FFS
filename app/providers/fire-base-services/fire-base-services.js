@@ -21,12 +21,9 @@ export class FireBaseServices {
         this.appliancesRef = this.dbRef.child("appliances");
         this.electronicsRef = this.dbRef.child("electronics");
         this.user = this.dbRef.getAuth();
-        this.usersRef.orderByChild('email').equalTo(this.user.password.email).on('value', snapshot => {
-            console.log('user data callback');
-            let data = snapshot.val();
-            this.userData = data[Object.keys(data)[0]];
-        });
+        if (this.user) this.initQueries();
     }
+
 
     login(data){
         return new Promise((resolve, reject) => {
@@ -39,6 +36,8 @@ export class FireBaseServices {
                     reject();
                 } else {
                     console.log("Successfully logged user with uid:", userData.uid);
+                    this.user = this.dbRef.getAuth();
+                    this.initQueries();
                     resolve();
                 }
             });
@@ -65,6 +64,8 @@ export class FireBaseServices {
                             value: 0.0
                         }
                       });
+                    this.initQueries();
+                    this.user = this.dbRef.getAuth();
                     console.log("Successfully created user account with uid:", userData.uid);
                     resolve();
                 }
@@ -74,6 +75,14 @@ export class FireBaseServices {
 
     signOut() {
         this.dbRef.unauth();
+    }
+
+    initQueries() {
+        this.usersRef.orderByChild('email').equalTo(this.user.password.email).on('value', snapshot => {
+            console.log('user data callback');
+            let data = snapshot.val();
+            this.userData = data[Object.keys(data)[0]];
+        });
     }
 
 }

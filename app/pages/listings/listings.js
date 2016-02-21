@@ -1,5 +1,6 @@
 import {Page, NavController} from 'ionic-framework/ionic';
 import {NewListingPage} from '../new-listing/new-listing';
+import {ListingOffersPage} from '../listing-offers/listing-offers';
 
 /*
   Generated class for the ListingsPage page.
@@ -17,4 +18,9 @@ export class ListingsPage {
   newListing() {
     this.nav.push(NewListingPage);
   }
+
+  viewOffers(data) {
+    this.nav.push(ListingOffersPage, {offers: data});
+  }
+
 }
