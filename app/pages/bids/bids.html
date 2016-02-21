@@ -10,15 +10,27 @@
 
 <ion-content class="bids">
  
-      <ion-list-header>
-      <h3>Confirmed Bids</h3>
-      <ion-note text-center>(Slide listings for options)</ion-note>
+  <ion-list>
+  <ion-list-header>
+      <h3>Confirmed Offers</h3>
     </ion-list-header>
     <ion-item *ngIf="fbdb.acceptedOffers.length == 0"><p>No confirmed listings</p></ion-item>
     <ion-item *ngFor="#listing of fbdb.acceptedOffers">
       <h2>{{listing.val().title}} <span primary>${{listing.val().finaloffer.price}}</span></h2>
-      <a button item-right secondary [href]="'tel:' + listing.val().finaloffer.phone"><ion-icon name="call"></ion-icon> Contact Seller</a>
+      <a button secondary [href]="'tel:' + listing.val().finaloffer.sellerphone"><ion-icon name="call"></ion-icon> Contact Seller</a>
+      <div item-right>
+        <h2><ion-icon name="contact"></ion-icon> {{listing.val().finaloffer.sellername}}</h2>
+      </div>
     </ion-item>
+  </ion-list>
+  <ion-list>
+    <ion-list-header>
+      <h3>Active Offers</h3>
+    </ion-list-header>
+    <ion-item *ngIf="fbdb.myOffers.length == 0">
+      <ion-note>No Active Offers</ion-note>
+    </ion-item>
+  </ion-list>
   <ion-card *ngFor="#listing of fbdb.myOffers;">
     <ion-item>
       <ion-thumbnail item-left (click)="showImages()">
@@ -32,7 +44,7 @@
       </div>
     </ion-item>
     <ion-card-content>
-      <p>Brand new vaccum, great condition, barely used. Sucks the shit out of anything.</p>
+      <p>{{fbdb.getItem(listing.val().itemkey).description}}</p>
     </ion-card-content>
     <ion-item>
       <p item-left>Highest offer: ${{fbdb.getItem(listing.val().itemkey).bestoffer}}</p>
