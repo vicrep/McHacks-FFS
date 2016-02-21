@@ -8,6 +8,31 @@
   <ion-title>My Bids</ion-title>
 </ion-navbar>
 
-<ion-content padding class="bids">
-  
+<ion-content class="bids">
+  <ion-card>
+    <ion-item>
+      <ion-thumbnail item-left (click)="showImages()">
+        <img src="assets/vacuum1.jpg">
+      </ion-thumbnail>
+      <h2><b>Vacuum Cleaner</b></h2>
+      <p>Posted by V. Repkow</p>
+      <div item-right text-right>
+        <h2>$20 (OBO)</h2>
+        <p>(4.7 <ion-icon name="star"></ion-icon>)</p>
+      </div>
+    </ion-item>
+    <ion-card-content>
+      <p>Brand new vaccum, great condition, barely used. Sucks the shit out of anything.</p>
+      <ion-note>Listing ends: Feb 25th, 2016</ion-note>
+    </ion-card-content>
+    <ion-item>
+      <ion-note item-left>Initial: $15</ion-note>
+      <p text-center>Current OBO: $20</p>
+      <p item-right>My OBO: $25</p>
+    </ion-item>
+    <ion-item>
+      <button item-left clear secondary><ion-icon name="arrow-dropup"></ion-icon> Edit my OBO</button>
+      <button item-right clear danger><ion-icon name="close"></ion-icon> Cancel my OBO</button>
+    </ion-item>
+  </ion-card>
 </ion-content>

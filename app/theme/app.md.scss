@@ -29,3 +29,15 @@
 // App Material Design Only Sass
 // --------------------------------------------------
 // CSS that should only apply to the Material Design app
+
+  .tabs-main tabbar {
+    background-color: #8BC34A;
+
+    a {
+      color: #f4f4f4 !important;
+    }
+  }
+  .tabs-main tab-highlight {
+    color: #f4f4f4;
+    background-color: #f4f4f4;
+  }

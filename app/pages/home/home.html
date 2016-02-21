@@ -7,21 +7,21 @@
 <ion-navbar primary *navbar>
   <ion-title>Home</ion-title>
 </ion-navbar>
+<ion-toolbar>
+  <ion-segment secondary [(ngModel)]="listingType">
+    <ion-segment-button value="all">
+      All
+    </ion-segment-button>
+    <ion-segment-button value="free">
+      Free
+    </ion-segment-button>
+    <ion-segment-button value="forsale">
+      For Sale
+    </ion-segment-button>
+  </ion-segment>
+</ion-toolbar>
 
 <ion-content class="home">
-  <div padding>
-    <ion-segment>
-      <ion-segment-button value="all">
-        All
-      </ion-segment-button>
-      <ion-segment-button value="free">
-        Free
-      </ion-segment-button>
-      <ion-segment-button value="forsale">
-        For Sale
-      </ion-segment-button>
-    </ion-segment>
-  </div>
   <ion-card>
     <ion-item>
       <ion-thumbnail item-left (click)="showImages()">
@@ -40,7 +40,7 @@
     </ion-card-content>
     <ion-item>
       <ion-note item-left>Initial: $15</ion-note>
-      <p>OBO: $20</p>
+      <p text-center>OBO: $20</p>
       <button item-right clear secondary><ion-icon name="arrow-dropup"></ion-icon> Top that OBO</button>
     </ion-item>
   </ion-card>

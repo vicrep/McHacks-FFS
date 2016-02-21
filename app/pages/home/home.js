@@ -12,5 +12,6 @@ import {Page, NavController} from 'ionic-framework/ionic';
 export class HomePage {
   constructor(nav: NavController) {
     this.nav = nav;
+    this.listingType = 'all';
   }
 }
