@@ -3192,7 +3192,7 @@
 	var login_1 = __webpack_require__(358);
 	var main_view_1 = __webpack_require__(361);
 	var fire_base_services_1 = __webpack_require__(360);
-	var dist_1 = __webpack_require__(368);
+	var dist_1 = __webpack_require__(369);
 	var MyApp = (function () {
 	    function MyApp(platform, FireBaseServices) {
 	        if (FireBaseServices.user)
@@ -62274,7 +62274,6 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(7);
-	var http_1 = __webpack_require__(145);
 	/*
 	 Generated class for the FireBaseServices provider.
 
@@ -62282,17 +62281,23 @@
 	 for more info on providers and Angular 2 DI.
 	 */
 	var FireBaseServices = (function () {
-	    function FireBaseServices(http) {
-	        this.http = http;
+	    function FireBaseServices() {
 	        this.data = null;
 	        this.userEmail = null;
 	        this.firebaseUrl = "https://ffsdb.firebaseio.com/";
 	        this.dbRef = new Firebase(this.firebaseUrl);
 	        this.usersRef = this.dbRef.child("users");
 	        this.itemsRef = this.dbRef.child("items");
+	        this.offersRef = this.dbRef.child("offers");
 	        this.user = this.dbRef.getAuth();
 	        this.mylistings = [];
+	        this.myconfirmedlistings = [];
+	        this.myinactivelistings = [];
 	        this.toprecentItems = [];
+	        this.myOffers = [];
+	        this.acceptedOffers = [];
+	        this.tempItem = null;
+	        this.listingoffers = [];
 	        if (this.user)
 	            this.initQueries();
 	    }
@@ -62354,6 +62359,7 @@
 	        var d = new Date();
 	        var n = d.toLocaleString();
 	        this.itemsRef.push().set({
+	            active: true,
 	            title: data.itemname,
 	            category: data.category,
 	            askingprice: data.initialprice,
@@ -62361,35 +62367,124 @@
 	            seller: this.user.password.email,
 	            bestoffer: 0,
 	            date: n,
-	            img: data.img
+	            img: data.img,
 	        });
+	    };
+	    FireBaseServices.prototype.addOffer = function (price, itemKey) {
+	        var _this = this;
+	        var d = new Date();
+	        var n = d.toLocaleString();
+	        this.offersRef.push().set({
+	            active: true,
+	            offerprice: price,
+	            itemkey: itemKey,
+	            buyer: this.user.password.email,
+	            date: n
+	        });
+	        //update the best offer of the item 
+	        this.itemsRef.child(itemKey).on('value', function (snapshot) {
+	            var data = snapshot.val();
+	            if (data["bestoffer"] < price) {
+	                _this.itemsRef.child(itemKey).update({ "bestoffer": price });
+	            }
+	        });
+	    };
+	    FireBaseServices.prototype.editOffer = function (price, offerKey) {
+	        //update the best offer of the item 
+	        this.offersRef.child(offerKey).update({ "offerprice": price });
+	    };
+	    FireBaseServices.prototype.deleteOffer = function (offerKey) {
+	        //update the best offer of the item 
+	        this.offersRef.child(offerKey).remove();
+	    };
+	    FireBaseServices.prototype.getItem = function (itemKey) {
+	        var _this = this;
+	        this.itemsRef.child(itemKey).on('value', function (snapshot) {
+	            _this.tempItem = snapshot.val();
+	        });
+	        return this.tempItem;
 	    };
 	    FireBaseServices.prototype.initQueries = function () {
 	        var _this = this;
 	        this.usersRef.orderByChild('email').equalTo(this.user.password.email).on('value', function (snapshot) {
-	            console.log('user data callback');
 	            var data = snapshot.val();
 	            _this.userData = data[Object.keys(data)[0]];
 	        });
 	        this.itemsRef.orderByChild('seller').equalTo(this.user.password.email).on('value', function (snapshot) {
-	            console.log('items data callback');
 	            _this.mylistings = [];
+	            _this.myconfirmedlistings = [];
+	            _this.myinactivelistings = [];
 	            snapshot.forEach(function (dataChild) {
-	                _this.mylistings.push(dataChild.val());
+	                var val = dataChild.val();
+	                if (val.active) {
+	                    if (val.finaloffer)
+	                        _this.myconfirmedlistings.unshift(dataChild);
+	                    else
+	                        _this.mylistings.unshift(dataChild);
+	                }
+	                else
+	                    _this.myinactivelistings.unshift(dataChild);
+	            });
+	        });
+	        this.itemsRef.on('value', function (snapshot) {
+	            _this.acceptedOffers = [];
+	            snapshot.forEach(function (dataChild) {
+	                var val = dataChild.val();
+	                console.log(val);
+	                if (val.finaloffer && val.active) {
+	                    if (val.finaloffer.buyerphone == _this.userData.phone)
+	                        _this.acceptedOffers.push(dataChild);
+	                }
 	            });
 	        });
 	        this.itemsRef.orderByChild('date').limitToFirst(40).on('value', function (snapshot) {
-	            console.log('home items data callback');
+	            var data = snapshot.val();
 	            _this.toprecentItems = [];
 	            snapshot.forEach(function (dataChild) {
-	                _this.toprecentItems.push(dataChild.val());
+	                if (dataChild.val().active)
+	                    _this.toprecentItems.push(dataChild);
 	            });
-	            console.log(_this.toprecentArray);
+	        });
+	        this.offersRef.orderByChild('buyer').equalTo(this.user.password.email).on('value', function (snapshot) {
+	            var data = snapshot.val();
+	            _this.myOffers = [];
+	            snapshot.forEach(function (dataChild) {
+	                if (dataChild.val().active == true) {
+	                    _this.myOffers.push(dataChild);
+	                }
+	            });
+	        });
+	    };
+	    FireBaseServices.prototype.getListingOffers = function (offerKey) {
+	        var _this = this;
+	        this.offersRef.orderByChild('itemkey').equalTo(offerKey).on('value', function (snapshot) {
+	            _this.listingoffers = [];
+	            snapshot.forEach(function (dataChild) {
+	                _this.listingoffers.unshift(dataChild);
+	            });
+	        });
+	    };
+	    FireBaseServices.prototype.acceptOffer = function (offer, key) {
+	        var _this = this;
+	        var listing = this.itemsRef.child(key);
+	        var sellerinfo = null;
+	        this.usersRef.orderByChild('email').equalTo(offer.val().buyer).on('value', function (snapshot) {
+	            var data = snapshot.val();
+	            var buyerinfo = data[Object.keys(data)[0]];
+	            listing.update({
+	                'finaloffer': {
+	                    price: offer.val().offerprice,
+	                    buyername: buyerinfo.name,
+	                    buyerphone: buyerinfo.phone,
+	                    sellername: _this.userData.name,
+	                    sellerphone: _this.userData.phone
+	                }
+	            });
 	        });
 	    };
 	    FireBaseServices = __decorate([
 	        core_1.Injectable(), 
-	        __metadata('design:paramtypes', [http_1.Http])
+	        __metadata('design:paramtypes', [])
 	    ], FireBaseServices);
 	    return FireBaseServices;
 	})();
@@ -62412,9 +62507,9 @@
 	var ionic_1 = __webpack_require__(5);
 	var home_1 = __webpack_require__(362);
 	var find_1 = __webpack_require__(363);
-	var bids_1 = __webpack_require__(365);
-	var listings_1 = __webpack_require__(366);
-	var profile_1 = __webpack_require__(386);
+	var bids_1 = __webpack_require__(366);
+	var listings_1 = __webpack_require__(367);
+	var profile_1 = __webpack_require__(387);
 	var MainViewPage = (function () {
 	    function MainViewPage(nav) {
 	        // set the root pages for each tab
@@ -62466,10 +62561,11 @@
 	        return Object.keys(yourlist);
 	    };
 	    HomePage.prototype.makeBid = function (item) {
+	        var _this = this;
+	        console.log('make an offer for ', item);
 	        var prompt = ionic_1.Alert.create();
 	        prompt.setTitle('Make a Bid');
-	        prompt.setSubTitle('Please enter your best offer for: ' + item);
-	        prompt.setMessage('Current highest offer: $10 (asking: $15)');
+	        prompt.setSubTitle('Please enter your best offer');
 	        prompt.addInput({
 	            type: 'number',
 	            name: 'amount',
@@ -62478,13 +62574,12 @@
 	        prompt.addButton({
 	            text: 'Cancel',
 	            handler: function (data) {
-	                console.log('Cancel clicked');
 	            }
 	        });
 	        prompt.addButton({
 	            text: 'Save',
 	            handler: function (data) {
-	                console.log('Saved clicked');
+	                _this.fbdb.addOffer(data.amount, item);
 	            }
 	        });
 	        this.nav.present(prompt);
@@ -62516,6 +62611,7 @@
 	};
 	var ionic_1 = __webpack_require__(5);
 	var custom_search_1 = __webpack_require__(364);
+	var fire_base_services_1 = __webpack_require__(360);
 	/*
 	  Generated class for the FindPage page.
 
@@ -62523,19 +62619,42 @@
 	  Ionic pages and navigation.
 	*/
 	var FindPage = (function () {
-	    function FindPage(nav) {
+	    function FindPage(nav, fbdb) {
 	        this.nav = nav;
+	        this.searchQuery = '';
+	        this.fbdb = fbdb;
 	    }
 	    FindPage.prototype.customSearch = function () {
 	        this.nav.push(custom_search_1.CustomSearchPage);
+	    };
+	    FindPage.prototype.initializeItems = function () {
+	        this.items = this.fbdb.toprecentItems;
+	    };
+	    FindPage.prototype.getItems = function (searchbar) {
+	        // Reset items back to all of the items
+	        this.initializeItems();
+	        // set q to the value of the searchbar
+	        var q = searchbar.value;
+	        // if the value is an empty string don't filter the items
+	        if (q.trim() == '') {
+	            return;
+	        }
+	        this.items = this.items.filter(function (v) {
+	            if (v.val().title.toLowerCase().indexOf(q.toLowerCase()) > -1
+	                || v.val().description.toLowerCase().indexOf(q.toLowerCase()) > -1) {
+	                return true;
+	            }
+	            return false;
+	        });
 	    };
 	    FindPage = __decorate([
 	        ionic_1.Page({
 	            templateUrl: 'build/pages/find/find.html',
 	        }), 
-	        __metadata('design:paramtypes', [ionic_1.NavController])
+	        __metadata('design:paramtypes', [ionic_1.NavController, (typeof (_a = typeof fire_base_services_1.FireBaseServices !== 'undefined' && fire_base_services_1.FireBaseServices) === 'function' && _a) || Object])
 	    ], FindPage);
 	    return FindPage;
+	    var _a;
 	})();
 	exports.FindPage = FindPage;
 
@@ -62554,6 +62673,8 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var ionic_1 = __webpack_require__(5);
+	var fire_base_services_1 = __webpack_require__(360);
+	var custom_search_results_1 = __webpack_require__(365);
 	/*
 	  Generated class for the CustomSearchPage page.
 
@@ -62561,16 +62682,55 @@
 	  Ionic pages and navigation.
 	*/
 	var CustomSearchPage = (function () {
-	    function CustomSearchPage(nav) {
+	    function CustomSearchPage(nav, fbdb) {
 	        this.nav = nav;
+	        this.fbdb = fbdb;
+	        this.searchdata = {
+	            type: 'all',
+	            category: 'all',
+	            minprice: 0,
+	            maxprice: 0,
+	            searchstr: '',
+	            sort: 'newest'
+	        };
 	    }
+	    CustomSearchPage.prototype.initializeItems = function () {
+	        this.items = this.fbdb.toprecentItems;
+	    };
+	    CustomSearchPage.prototype.getItems = function () {
+	        // Reset items back to all of the items
+	        this.initializeItems();
+	        // set q to the value of the search query
+	        var q = this.searchdata;
+	        this.items = this.items.filter(function (v) {
+	            switch (q.type) {
+	                case 'all': break;
+	                case 'free': if (v.val().askingprice != 0)
+	                    return false;
+	                case 'forsale': if (v.val().askingprice == 0)
+	                    return false;
+	            }
+	            ;
+	            if (q.minprice > v.val().askingprice)
+	                return false;
+	            if (q.maxprice != 0 && q.maxprice < v.val().askingprice)
+	                return false;
+	            if (v.val().title.toLowerCase().indexOf(q.searchstr.toLowerCase()) < -1
+	                || v.val().description.toLowerCase().indexOf(q.searchstr.toLowerCase()) < -1) {
+	                return false;
+	            }
+	            return true;
+	        });
+	        this.nav.push(custom_search_results_1.CustomSearchResultsPage, { items: this.items });
+	    };
 	    CustomSearchPage = __decorate([
 	        ionic_1.Page({
 	            templateUrl: 'build/pages/custom-search/custom-search.html',
 	        }), 
-	        __metadata('design:paramtypes', [ionic_1.NavController])
+	        __metadata('design:paramtypes', [ionic_1.NavController, (typeof (_a = typeof fire_base_services_1.FireBaseServices !== 'undefined' && fire_base_services_1.FireBaseServices) === 'function' && _a) || Object])
 	    ], CustomSearchPage);
 	    return CustomSearchPage;
+	    var _a;
 	})();
 	exports.CustomSearchPage = CustomSearchPage;
 
@@ -62589,49 +62749,30 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var ionic_1 = __webpack_require__(5);
+	var fire_base_services_1 = __webpack_require__(360);
 	/*
-	  Generated class for the BidsPage page.
+	  Generated class for the CustomSearchResultsPage page.
 
 	  See http://ionicframework.com/docs/v2/components/#navigation for more info on
 	  Ionic pages and navigation.
 	*/
-	var BidsPage = (function () {
-	    function BidsPage(nav) {
+	var CustomSearchResultsPage = (function () {
+	    function CustomSearchResultsPage(nav, params, fbdb) {
 	        this.nav = nav;
+	        this.params = params;
+	        this.items = this.params.get('items');
+	        this.fbdb = fbdb;
 	    }
-	    BidsPage.prototype.editBid = function (item) {
-	        var prompt = ionic_1.Alert.create();
-	        prompt.setTitle('Edit offer');
-	        prompt.setSubTitle('Please enter your best offer for: ' + item);
-	        prompt.setMessage('Current highest offer: $10 (asking: $15)');
-	        prompt.addInput({
-	            type: 'number',
-	            name: 'amount',
-	            value: 10
-	        });
-	        prompt.addButton({
-	            text: 'Cancel',
-	            handler: function (data) {
-	                console.log('Cancel clicked');
-	            }
-	        });
-	        prompt.addButton({
-	            text: 'Save',
-	            handler: function (data) {
-	                console.log('Saved clicked');
-	            }
-	        });
-	        this.nav.present(prompt);
-	    };
-	    BidsPage = __decorate([
+	    CustomSearchResultsPage = __decorate([
 	        ionic_1.Page({
-	            templateUrl: 'build/pages/bids/bids.html',
+	            templateUrl: 'build/pages/custom-search-results/custom-search-results.html',
 	        }), 
-	        __metadata('design:paramtypes', [ionic_1.NavController])
-	    ], BidsPage);
-	    return BidsPage;
+	        __metadata('design:paramtypes', [ionic_1.NavController, ionic_1.NavParams, (typeof (_a = typeof fire_base_services_1.FireBaseServices !== 'undefined' && fire_base_services_1.FireBaseServices) === 'function' && _a) || Object])
+	    ], CustomSearchResultsPage);
+	    return CustomSearchResultsPage;
+	    var _a;
 	})();
-	exports.BidsPage = BidsPage;
+	exports.CustomSearchResultsPage = CustomSearchResultsPage;
 
 
 /***/ },
@@ -62648,8 +62789,69 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var ionic_1 = __webpack_require__(5);
-	var new_listing_1 = __webpack_require__(367);
-	var listing_offers_1 = __webpack_require__(385);
+	var fire_base_services_1 = __webpack_require__(360);
+	/*
+	  Generated class for the BidsPage page.
+
+	  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+	  Ionic pages and navigation.
+	*/
+	var BidsPage = (function () {
+	    function BidsPage(nav, FireBaseServices) {
+	        this.nav = nav;
+	        this.fbdb = FireBaseServices;
+	    }
+	    BidsPage.prototype.editBid = function (item) {
+	        var _this = this;
+	        var prompt = ionic_1.Alert.create();
+	        prompt.setTitle('Edit offer');
+	        prompt.setSubTitle('Please enter your best offer');
+	        prompt.addInput({
+	            type: 'number',
+	            name: 'amount',
+	            value: 10
+	        });
+	        prompt.addButton({
+	            text: 'Cancel',
+	            handler: function (data) {
+	            }
+	        });
+	        prompt.addButton({
+	            text: 'Save',
+	            handler: function (data) {
+	                _this.fbdb.editOffer(data.amount, item);
+	            }
+	        });
+	        this.nav.present(prompt);
+	    };
+	    BidsPage = __decorate([
+	        ionic_1.Page({
+	            templateUrl: 'build/pages/bids/bids.html',
+	        }), 
+	        __metadata('design:paramtypes', [ionic_1.NavController, (typeof (_a = typeof fire_base_services_1.FireBaseServices !== 'undefined' && fire_base_services_1.FireBaseServices) === 'function' && _a) || Object])
+	    ], BidsPage);
+	    return BidsPage;
+	    var _a;
+	})();
+	exports.BidsPage = BidsPage;
+
+
+/***/ },
+/* 367 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var ionic_1 = __webpack_require__(5);
+	var new_listing_1 = __webpack_require__(368);
+	var listing_offers_1 = __webpack_require__(386);
 	var fire_base_services_1 = __webpack_require__(360);
 	/*
 	  Generated class for the ListingsPage page.
@@ -62666,7 +62868,8 @@
 	        this.nav.push(new_listing_1.NewListingPage);
 	    };
 	    ListingsPage.prototype.viewOffers = function (data) {
-	        this.nav.push(listing_offers_1.ListingOffersPage, { offers: data });
+	        this.fbdb.getListingOffers(data.key());
+	        this.nav.push(listing_offers_1.ListingOffersPage, { name: data.val().title, listingkey: data.key() });
 	    };
 	    ListingsPage.prototype.getKeys = function (yourlist) {
 	        return Object.keys(yourlist);
@@ -62684,7 +62887,7 @@
 
 
 /***/ },
-/* 367 */
+/* 368 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -62698,7 +62901,7 @@
 	};
 	var ionic_1 = __webpack_require__(5);
 	var fire_base_services_1 = __webpack_require__(360);
-	var dist_1 = __webpack_require__(368);
+	var dist_1 = __webpack_require__(369);
 	/*
 	  Generated class for the NewListingPage page.
 
@@ -62742,37 +62945,37 @@
 
 
 /***/ },
-/* 368 */
+/* 369 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ng1_1 = __webpack_require__(369);
+	var ng1_1 = __webpack_require__(370);
 	ng1_1.initAngular1();
 	var DEVICE_READY_TIMEOUT = 2000;
-	var actionsheet_1 = __webpack_require__(370);
+	var actionsheet_1 = __webpack_require__(371);
 	exports.ActionSheet = actionsheet_1.ActionSheet;
-	var barcodescanner_1 = __webpack_require__(373);
+	var barcodescanner_1 = __webpack_require__(374);
 	exports.BarcodeScanner = barcodescanner_1.BarcodeScanner;
-	var ble_1 = __webpack_require__(374);
+	var ble_1 = __webpack_require__(375);
 	exports.BLE = ble_1.BLE;
-	var camera_1 = __webpack_require__(375);
+	var camera_1 = __webpack_require__(376);
 	exports.Camera = camera_1.Camera;
-	var calendar_1 = __webpack_require__(376);
+	var calendar_1 = __webpack_require__(377);
 	exports.Calendar = calendar_1.Calendar;
-	var contacts_1 = __webpack_require__(377);
+	var contacts_1 = __webpack_require__(378);
 	exports.Contacts = contacts_1.Contacts;
-	var device_1 = __webpack_require__(378);
+	var device_1 = __webpack_require__(379);
 	exports.Device = device_1.Device;
-	var facebook_1 = __webpack_require__(379);
+	var facebook_1 = __webpack_require__(380);
 	exports.Facebook = facebook_1.Facebook;
-	var geolocation_1 = __webpack_require__(380);
+	var geolocation_1 = __webpack_require__(381);
 	exports.Geolocation = geolocation_1.Geolocation;
-	var push_1 = __webpack_require__(381);
+	var push_1 = __webpack_require__(382);
 	exports.Push = push_1.Push;
-	var statusbar_1 = __webpack_require__(382);
+	var statusbar_1 = __webpack_require__(383);
 	exports.StatusBar = statusbar_1.StatusBar;
-	var toast_1 = __webpack_require__(383);
+	var toast_1 = __webpack_require__(384);
 	exports.Toast = toast_1.Toast;
-	var touchid_1 = __webpack_require__(384);
+	var touchid_1 = __webpack_require__(385);
 	exports.TouchID = touchid_1.TouchID;
 	// Window export to use outside of a module loading system
 	window['IonicNative'] = {
@@ -62808,7 +63011,7 @@
 	//# sourceMappingURL=index.js.map
 
 /***/ },
-/* 369 */
+/* 370 */
 /***/ function(module, exports) {
 
 	/**
@@ -62837,7 +63040,7 @@
 	//# sourceMappingURL=ng1.js.map
 
 /***/ },
-/* 370 */
+/* 371 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -62846,7 +63049,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	/**
 	 * The ActionSheet plugin shows a native list of options the user can choose from.
 	 *
@@ -62925,10 +63128,10 @@
 	//# sourceMappingURL=actionsheet.js.map
 
 /***/ },
-/* 371 */
+/* 372 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var util_1 = __webpack_require__(372);
+	var util_1 = __webpack_require__(373);
 	var Observable_1 = __webpack_require__(56);
 	exports.getPlugin = function (pluginRef) {
 	    return util_1.get(window, pluginRef);
@@ -63119,7 +63322,7 @@
 	//# sourceMappingURL=plugin.js.map
 
 /***/ },
-/* 372 */
+/* 373 */
 /***/ function(module, exports) {
 
 	function get(obj, path) {
@@ -63136,7 +63339,7 @@
 	//# sourceMappingURL=util.js.map
 
 /***/ },
-/* 373 */
+/* 374 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -63145,7 +63348,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	/**
 	 * The Barcode Scanner Plugin opens a camera view and automatically scans a barcode, returning the data back to you.
 	 *
@@ -63192,7 +63395,7 @@
 	//# sourceMappingURL=barcodescanner.js.map
 
 /***/ },
-/* 374 */
+/* 375 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -63201,7 +63404,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	var Observable_1 = __webpack_require__(56);
 	/**
 	 * This plugin enables communication between a phone and Bluetooth Low Energy (BLE) peripherals.
@@ -63717,7 +63920,7 @@
 	//# sourceMappingURL=ble.js.map
 
 /***/ },
-/* 375 */
+/* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -63726,7 +63929,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	/**
 	 * Take a photo or capture video.
 	 *
@@ -63787,7 +63990,7 @@
 	//# sourceMappingURL=camera.js.map
 
 /***/ },
-/* 376 */
+/* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -63796,7 +63999,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	/**
 	 * This plugin allows you to add events to the Calendar of the mobile device.
 	 *
@@ -64195,7 +64398,7 @@
 	//# sourceMappingURL=calendar.js.map
 
 /***/ },
-/* 377 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -64204,7 +64407,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	/**
 	 * Access and manage Contacts on the device.
 	 *
@@ -64302,7 +64505,7 @@
 	//# sourceMappingURL=contacts.js.map
 
 /***/ },
-/* 378 */
+/* 379 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -64311,7 +64514,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	/**
 	 * Access information about the underlying device and platform.
 	 *
@@ -64347,7 +64550,7 @@
 	//# sourceMappingURL=device.js.map
 
 /***/ },
-/* 379 */
+/* 380 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -64356,7 +64559,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	/**
 	 * Use the Facebook Connect plugin to obtain access to the native FB application on iOS and Android.
 	 *
@@ -64660,7 +64863,7 @@
 	//# sourceMappingURL=facebook.js.map
 
 /***/ },
-/* 380 */
+/* 381 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -64669,7 +64872,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	var Observable_1 = __webpack_require__(56);
 	/**
 	 * Get geolocation data.
@@ -64753,7 +64956,7 @@
 	//# sourceMappingURL=geolocation.js.map
 
 /***/ },
-/* 381 */
+/* 382 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -64762,7 +64965,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	/**
 	 * Register and receive push notifications.
 	 *
@@ -64830,7 +65033,7 @@
 	//# sourceMappingURL=push.js.map
 
 /***/ },
-/* 382 */
+/* 383 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -64839,7 +65042,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	/**
 	 * Manage the appearance of the native status bar.
 	 *
@@ -64972,7 +65175,7 @@
 	//# sourceMappingURL=statusbar.js.map
 
 /***/ },
-/* 383 */
+/* 384 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -64981,7 +65184,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	var Observable_1 = __webpack_require__(56);
 	/**
 	 * This plugin allows you to show a native Toast (a little text popup) on iOS, Android and WP8. It's great for showing a non intrusive native notification which is guaranteed always in the viewport of the browser.
@@ -65175,7 +65378,7 @@
 	//# sourceMappingURL=toast.js.map
 
 /***/ },
-/* 384 */
+/* 385 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -65184,7 +65387,7 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var plugin_1 = __webpack_require__(371);
+	var plugin_1 = __webpack_require__(372);
 	/**
 	 * Scan the fingerprint of a user with the TouchID sensor.
 	 *
@@ -65290,7 +65493,7 @@
 	//# sourceMappingURL=touchid.js.map
 
 /***/ },
-/* 385 */
+/* 386 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -65303,6 +65506,7 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var ionic_1 = __webpack_require__(5);
+	var fire_base_services_1 = __webpack_require__(360);
 	/*
 	  Generated class for the ListingOffersPage page.
 
@@ -65310,24 +65514,31 @@
 	  Ionic pages and navigation.
 	*/
 	var ListingOffersPage = (function () {
-	    function ListingOffersPage(nav, params) {
+	    function ListingOffersPage(nav, params, fbdb) {
 	        this.nav = nav;
 	        this.params = params;
-	        this.offers = this.params.get('offers');
+	        this.name = this.params.get('name');
+	        this.key = this.params.get('listingkey');
+	        this.fbdb = fbdb;
 	    }
+	    ListingOffersPage.prototype.acceptOffer = function (offer, key) {
+	        this.fbdb.acceptOffer(offer, key);
+	        this.nav.pop();
+	    };
 	    ListingOffersPage = __decorate([
 	        ionic_1.Page({
 	            templateUrl: 'build/pages/listing-offers/listing-offers.html',
 	        }), 
-	        __metadata('design:paramtypes', [ionic_1.NavController, ionic_1.NavParams])
+	        __metadata('design:paramtypes', [ionic_1.NavController, ionic_1.NavParams, (typeof (_a = typeof fire_base_services_1.FireBaseServices !== 'undefined' && fire_base_services_1.FireBaseServices) === 'function' && _a) || Object])
 	    ], ListingOffersPage);
 	    return ListingOffersPage;
+	    var _a;
 	})();
 	exports.ListingOffersPage = ListingOffersPage;
 
 
 /***/ },
-/* 386 */
+/* 387 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {

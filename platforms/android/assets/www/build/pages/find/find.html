@@ -9,10 +9,31 @@
 </ion-navbar>
 
 <ion-content class="find">
-  <ion-searchbar hideCancelButton></ion-searchbar>
+  <ion-searchbar [(ngModel)]="searchQuery" (input)="getItems($event)" hideCancelButton></ion-searchbar>
   <ion-item>
     <p text-center>Enter a search term, or</p>
     <button item-right clear secondary (click)="customSearch()">make a custom search</button>
   </ion-item>
-
+  <ion-card *ngFor="#listing of items">
+    <ion-item>
+      <ion-thumbnail item-left (click)="showImages()">
+        <img [src]="listing.val().img">
+      </ion-thumbnail>
+      <h2><b>{{listing.val().title}}</b></h2>
+      <p>Posted by V. Repkow</p>
+      <div item-right text-right>
+        <h2 *ngIf="listing.val().askingprice == 0">FREE</h2>
+        <h2 *ngIf="listing.val().askingprice != 0">${{listing.val().askingprice}} (OBO)</h2>
+        <p>(4.7 <ion-icon name="star"></ion-icon>)</p>
+      </div>
+    </ion-item>
+    <ion-card-content>
+      <p>{{listing.val().description}}</p>
+    </ion-card-content>
+    <ion-item>
+      <p item-left>Best offer: ${{listing.val().bestoffer}}</p>
+      <p text-center><ion-icon name="people"> 3</ion-icon></p>
+      <button item-right clear secondary (click)="makeBid(listing.key())" [disabled]="listing.val().seller == fbdb.user.password.email"><ion-icon name="arrow-dropup"></ion-icon> Make an offer</button>
+    </ion-item>
+  </ion-card>
 </ion-content>
