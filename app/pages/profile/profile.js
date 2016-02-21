@@ -15,11 +15,6 @@ export class ProfilePage {
   constructor(nav: NavController, FireBaseServices: FireBaseServices) {
     this.nav = nav;
     this.fbdb = FireBaseServices;
-    this.user = {
-      name: 'Victor Repkow',
-      email: 'victor.repkow@mail.mcgill.ca',
-      rating: 4.2
-    }
   }
 
   signOut() {

@@ -11,13 +11,14 @@
 <ion-content padding class="profile">
   <ion-card>
     <ion-item>
-      <h1 text-center>Victor Repkow</h1>
+      <h1 text-center>{{fbdb.userData.name}}</h1>
       <h2 text-center secondary>
-        <span *ngFor="#i of [1,2,3,4,5]">
-          <ion-icon [name]="user.rating >= i ? 'star' : 'star-outline'"></ion-icon>
+        <span *ngIf="fbdb.userData.rating.count == 0">No ratings yet</span>
+        <span *ngFor="#i of [1,2,3,4,5]" *ngIf="fbdb.userData.rating.count > 0">
+          <ion-icon [name]="fbdb.userData.rating.value >= i ? 'star' : 'star-outline'"></ion-icon>
         </span>
       </h2>
-      <p text-center>victor.repkow@mail.mcgill.ca</p>
+      <p text-center>{{fbdb.userData.email}}</p>
     </ion-item>
     <button ion-item>My past purchases</button>
     <button ion-item>My past listings</button>

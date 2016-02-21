@@ -17,7 +17,10 @@ export class LoginPage {
   constructor(nav: NavController, fireBaseServices: FireBaseServices) {
     this.fireBaseServices = fireBaseServices ;
     this.nav = nav;
-    this.login = {};
+    this.login = {
+        email: '',
+        password: ''
+    };
     this.submitted = false;
 
     this.firebaseUrl = "https://ffsdb.firebaseio.com/";
@@ -27,7 +30,7 @@ export class LoginPage {
 
       if (form.valid) {       
         /* Authenticate User */  
-        this.fireBaseServices.login(form.controls.username.value , form.controls.password.value)
+        this.fireBaseServices.login(this.login)
         .then(() => {
       console.log("Sign In succeeded");
             this.nav.setRoot(MainViewPage);
