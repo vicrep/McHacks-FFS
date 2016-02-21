@@ -1,6 +1,7 @@
 import {App, Platform} from 'ionic-framework/ionic';
 import {Inject} from 'angular2/core';
 import {LoginPage} from './pages/login/login';
+import {MainViewPage} from './pages/main-view/main-view';
 import {FireBaseServices} from './providers/fire-base-services/fire-base-services'
   
 @App({
@@ -10,8 +11,10 @@ import {FireBaseServices} from './providers/fire-base-services/fire-base-service
 
 })
 export class MyApp {
-  constructor(@Inject(Platform) platform) {
-    this.rootPage = LoginPage;
+  constructor(@Inject(Platform) platform, FireBaseServices: FireBaseServices) {
+    console.log(FireBaseServices.user);
+    if(FireBaseServices.user) this.rootPage = MainViewPage;
+    else this.rootPage = LoginPage;
     platform.ready().then(() => {
       // The platform is now ready. Note: if this callback fails to fire, follow
       // the Troubleshooting guide for a number of possible solutions:
