@@ -1,7 +1,6 @@
 import {Page, NavController, Alert} from 'ionic-framework/ionic';
 import {FireBaseServices} from '../../providers/fire-base-services/fire-base-services';
 
-
 /*
   Generated class for the HomePage page.
 
@@ -9,7 +8,7 @@ import {FireBaseServices} from '../../providers/fire-base-services/fire-base-ser
   Ionic pages and navigation.
 */
 @Page({
-  templateUrl: 'build/pages/home/home.html',
+  templateUrl: 'build/pages/home/home.html'
 })
 export class HomePage {
   constructor(nav: NavController, FireBaseServices: FireBaseServices) {

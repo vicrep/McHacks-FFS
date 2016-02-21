@@ -36,7 +36,7 @@ export class FireBaseServices {
                     console.log("Error logging user:", error);
                     reject();
                 } else {
-                    this.userEmail = emailV;
+                    this.userEmail = data.email;
                     console.log("Successfully logged user with uid:", userData.uid);
                     this.user = this.dbRef.getAuth();
                     this.initQueries();
@@ -79,30 +79,18 @@ export class FireBaseServices {
         this.dbRef.unauth();
     }
 
-    addItem(title, category, intitialPrice, description){
+    addItem(data){
         let d = new Date();
         let n = d.toLocaleString();
         this.itemsRef.push().set({
-            title : title,
-            category : category ,
-            askingprice : intitialPrice,
-            description : description,
-            seller : this.user.password.email,
-            bestoffer : intitialPrice,
-            date : n
-        });
-    }
-    addFreeItem(title, category, description){
-        let d = new Date();
-        let n = d.toLocaleString();
-        this.itemsRef.push().set({
-            title : title,
-            category : category ,
-            askingprice : 0,
-            description : description,
+            title : data.itemname,
+            category : data.category ,
+            askingprice : data.initialprice,
+            description : data.description,
             seller : this.user.password.email,
             bestoffer : 0,
-            date : n
+            date : n,
+            img: data.img
         });
     }
     addOffer(price, itemKey){
@@ -131,20 +119,28 @@ export class FireBaseServices {
         });
         this.itemsRef.orderByChild('seller').equalTo(this.user.password.email).on('value', snapshot => {
             console.log('items data callback');
-            let data = snapshot.val();
-            this.mylistings=data;
-            console.log(data);
+            this.mylistings=[];
+            snapshot.forEach(dataChild => {
+                this.mylistings.push(dataChild.val());
+            });
         });
           this.itemsRef.orderByChild('date').limitToFirst(40).on('value', snapshot => {
             console.log('home items data callback');
             let data = snapshot.val();
-            for (keyV in data){
-                console.log(keyV);
-                if(data[keyV].seller == this.user.password.email){
-                    delete data[keyV];
-                }
-            }
-            this.toprecentItems=data;
+            this.toprecentItems=[];
+            snapshot.forEach(dataChild => {
+                  this.toprecentItems.push(dataChild);
+          });
+
+
+// for (keyV in data){
+//                 console.log(keyV);
+//                 if(data[keyV].seller == this.user.password.email){
+//                     delete data[keyV];
+//                 }
+//             }
+//             this.toprecentItems=data;
+
             console.log(data);
         });
         this.offersRef.orderByChild('date').equalTo(this.user.password.email).on('value', snapshot => {

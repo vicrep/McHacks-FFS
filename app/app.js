@@ -1,18 +1,18 @@
 import {App, Platform} from 'ionic-framework/ionic';
-import {Inject} from 'angular2/core';
+import {Inject, Iterable} from 'angular2/core';
 import {LoginPage} from './pages/login/login';
 import {MainViewPage} from './pages/main-view/main-view';
-import {FireBaseServices} from './providers/fire-base-services/fire-base-services'
-  
+import {FireBaseServices} from './providers/fire-base-services/fire-base-services';
+import {Camera} from 'ionic-native/dist';
+
 @App({
   template: '<ion-nav [root]="rootPage"></ion-nav>',
   config: {}, // http://ionicframework.com/docs/v2/api/config/Config/
-  providers: [FireBaseServices]
+  providers: [FireBaseServices, Camera]
 
 })
 export class MyApp {
   constructor(@Inject(Platform) platform, FireBaseServices: FireBaseServices) {
-    console.log(FireBaseServices.user);
     if(FireBaseServices.user) this.rootPage = MainViewPage;
     else this.rootPage = LoginPage;
     platform.ready().then(() => {

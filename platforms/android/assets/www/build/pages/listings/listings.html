@@ -1,0 +1,42 @@
+<!--
+  Generated template for the ListingsPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-navbar *navbar primary>
+  <ion-title>My Listings</ion-title>
+</ion-navbar>
+<ion-content class="listings">
+  <button fab fab-bottom fab-right secondary (click)="newListing()"><ion-icon name="add"></ion-icon></button>
+  <ion-list>
+    <ion-list-header>
+      Slide the listings to reveal options
+    </ion-list-header>
+    <ion-item-sliding *ngFor="#listing of getKeys(fbdb.mylistings)">
+      <ion-item>
+        <ion-thumbnail item-left>
+          <img src="assets/vacuum1.jpg">
+        </ion-thumbnail>
+        <h2>{{fbdb.mylistings[listing].title}}</h2>
+        <p>Started {{fbdb.mylistings[listing].date}}</p>
+        <div item-right>
+          <p text-right>Asking offer: ${{fbdb.mylistings[listing].askingprice}}</p>
+          <p text-right>Best offer: ${{fbdb.mylistings[listing].bestoffer}}</p>
+          <p text-right><ion-icon name="people"></ion-icon> 3</p>
+        </div>
+      </ion-item>
+      <ion-item-options>
+        <button primary (click)="viewOffers('Vacuum Cleaner')">
+          <ion-icon name="people"></ion-icon> Offers
+        </button>
+        <button secondary>
+          <ion-icon name="create"></ion-icon> Edit
+        </button>
+        <button danger>
+          <ion-icon name="close"></ion-icon> Delete
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+ </ion-list>
+</ion-content>
