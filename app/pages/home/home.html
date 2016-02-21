@@ -30,7 +30,7 @@
       <h2><b>{{fbdb.toprecentItems[listing].title}}</b></h2>
       <p>Posted by V. Repkow</p>
       <div item-right text-right>
-        <h2>${{fbdb.mylistings[listing].askingprice}} (OBO)</h2>
+        <h2>${{fbdb.toprecentItems[listing].askingprice}} (OBO)</h2>
         <p>(4.7 <ion-icon name="star"></ion-icon>)</p>
       </div>
     </ion-item>
@@ -40,7 +40,7 @@
     <ion-item>
       <p item-left>Best offer: ${{fbdb.toprecentItems[listing].bestoffer}}</p>
       <p text-center><ion-icon name="people"> 3</ion-icon></p>
-      <button item-right clear secondary (click)="makeBid('Vacuum Cleaner')"><ion-icon name="arrow-dropup"></ion-icon> Make an offer</button>
+      <button item-right clear secondary (click)="makeBid(listing)"><ion-icon name="arrow-dropup"></ion-icon> Make an offer</button>
     </ion-item>
   </ion-card>
 </ion-content>

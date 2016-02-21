@@ -17,8 +17,6 @@ export class ListingsPage {
   constructor(nav: NavController, FireBaseServices: FireBaseServices) {
     this.nav = nav;
     this.fbdb = FireBaseServices;
-    this.mylistings = this.fbdb.mylistings;
-    this.mykeys = Object.keys(this.mylistings);
   }
   newListing() {
     this.nav.push(NewListingPage);

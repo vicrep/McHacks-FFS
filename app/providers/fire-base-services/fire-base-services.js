@@ -17,9 +17,11 @@ export class FireBaseServices {
         this.dbRef = new Firebase(this.firebaseUrl);
         this.usersRef = this.dbRef.child("users");
         this.itemsRef = this.dbRef.child("items");
+        this.offersRef = this.dbRef.child("ofers");
         this.user = this.dbRef.getAuth();
         this.mylistings = [];
         this.toprecentItems = [];
+        this.myOffers = [];
         if (this.user) this.initQueries();
     }
 
@@ -98,9 +100,27 @@ export class FireBaseServices {
             category : category ,
             askingprice : 0,
             description : description,
-            seller : this.user.password.email
+            seller : this.user.password.email,
             bestoffer : 0,
             date : n
+        });
+    }
+    addOffer(price, itemKey){
+        let d = new Date();
+        let n = d.toLocaleString();
+        this.offersRef.push().set({
+            offerprice : price,
+            itemkey : itemKey ,
+            buyer : this.user.password.email
+            date : n
+        });
+        //update the best offer of the item 
+        this.itemsRef.child(itemKey).on('value', snapshot=> {
+            let data = snapshot.val();
+            if (data["bestoffer"] < price){
+                console.log(data["bestoffer"]);
+                this.itemsRef.child(itemKey).update({"bestoffer" : price});
+            }
         });
     }
     initQueries() {
@@ -118,7 +138,19 @@ export class FireBaseServices {
           this.itemsRef.orderByChild('date').limitToFirst(40).on('value', snapshot => {
             console.log('home items data callback');
             let data = snapshot.val();
+            for (keyV in data){
+                console.log(keyV);
+                if(data[keyV].seller == this.user.password.email){
+                    delete data[keyV];
+                }
+            }
             this.toprecentItems=data;
+            console.log(data);
+        });
+        this.offersRef.orderByChild('date').equalTo(this.user.password.email).on('value', snapshot => {
+            console.log('offers callback');
+            let data = snapshot.val();
+            this.myOffers=data;
             console.log(data);
         });
     }

@@ -21,8 +21,9 @@ export class HomePage {
   getKeys (yourlist){
     return Object.keys(yourlist);
   }
-  
+
   makeBid(item) {
+    console.log('make an offer for ',item);
     let prompt = Alert.create();
     prompt.setTitle('Make a Bid');
     prompt.setSubTitle('Please enter your best offer for: ' + item);
@@ -41,6 +42,7 @@ export class HomePage {
     prompt.addButton({
       text: 'Save',
       handler: data => {
+        this.fbdb.addOffer(data.amount, item);
         console.log('Saved clicked');
       }
     });
