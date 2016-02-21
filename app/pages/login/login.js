@@ -25,7 +25,6 @@ export class LoginPage {
 
    onLogin(form) {
 
-      this.submitted = true;
       if (form.valid) {       
         /* Authenticate User */  
         this.fireBaseServices.login(form.controls.username.value , form.controls.password.value)

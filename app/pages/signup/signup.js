@@ -32,7 +32,7 @@ export class SignupPage {
     if (form.valid) {
     	 if (form.valid) {       
         /* Authenticate User */  
-        this.fireBaseServices.signup(form.controls.emailaddress.value, form.controls.password.value )
+        this.fireBaseServices.signup(form.controls.emailaddress.value, form.controls.password.value , form.controls.university.value)
         .then(() => {
 			console.log("SignUp Succeeded");
             this.nav.setRoot(LoginPage);

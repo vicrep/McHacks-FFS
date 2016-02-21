@@ -14,6 +14,12 @@ export class FireBaseServices {
         this.data = null;
         this.firebaseUrl = "https://ffsdb.firebaseio.com/";
         this.dbRef = new Firebase(this.firebaseUrl);
+        this.usersRef = this.dbRef.child("users");
+        this.booksRef = this.dbRef.child("books");
+        this.clothesRef = this.dbRef.child("clothes");
+        this.furnitureRef = this.dbRef.child("furniture");
+        this.appliancesRef = this.dbRef.child("appliances");
+        this.electronicsRef = this.dbRef.child("electronics");
         this.user = this.dbRef.getAuth();
     }
 
@@ -35,7 +41,8 @@ export class FireBaseServices {
         })
     }
 
-    signup(emailV, passwordV){
+    signup(emailV, passwordV, universityV){
+
 
         return new Promise((resolve, reject) => {
             this.dbRef.createUser({
@@ -46,6 +53,10 @@ export class FireBaseServices {
                     console.log("Error creating user:", error);
                     reject();
                 } else {
+                    this.usersRef.push().set({
+                        email : emailV,
+                        university : universityV
+                      });
                     console.log("Successfully created user account with uid:", userData.uid);
                     resolve();
                 }

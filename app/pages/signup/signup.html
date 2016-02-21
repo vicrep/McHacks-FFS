@@ -22,7 +22,7 @@
       </ion-item>
       <ion-item>
         <ion-label>University</ion-label>
-        <ion-select [(ngModel)]="university">
+        <ion-select [(ngModel)]="signup.university" ngControl="university"  #university="ngForm" required>
           <ion-option value="mcgill" checked="true">McGill</ion-option>
           <ion-option value="concordia">Concordia</ion-option>
           <ion-option disabled>More coming soon!</ion-option>
