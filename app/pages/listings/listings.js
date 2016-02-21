@@ -23,7 +23,8 @@ export class ListingsPage {
   }
 
   viewOffers(data) {
-    this.nav.push(ListingOffersPage, {offers: data});
+    this.fbdb.getListingOffers(data.key());
+    this.nav.push(ListingOffersPage, {name: data.val().title, listingkey: data.key()});
   }
   getKeys (yourlist){
     return Object.keys(yourlist);

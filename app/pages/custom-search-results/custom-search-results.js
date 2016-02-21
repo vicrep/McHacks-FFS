@@ -1,27 +1,20 @@
 import {Page, NavController, NavParams} from 'ionic-framework/ionic';
 import {FireBaseServices} from '../../providers/fire-base-services/fire-base-services';
 
-
 /*
-  Generated class for the ListingOffersPage page.
+  Generated class for the CustomSearchResultsPage page.
 
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 */
 @Page({
-  templateUrl: 'build/pages/listing-offers/listing-offers.html',
+  templateUrl: 'build/pages/custom-search-results/custom-search-results.html',
 })
-export class ListingOffersPage {
+export class CustomSearchResultsPage {
   constructor(nav: NavController, params: NavParams, fbdb: FireBaseServices) {
     this.nav = nav;
     this.params = params;
-    this.name = this.params.get('name');
-    this.key = this.params.get('listingkey');
+    this.items = this.params.get('items');
     this.fbdb = fbdb;
-  }
-
-  acceptOffer(offer, key) {
-    this.fbdb.acceptOffer(offer, key);
-    this.nav.pop();
   }
 }

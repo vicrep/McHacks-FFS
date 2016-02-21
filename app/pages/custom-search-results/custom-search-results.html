@@ -1,19 +1,14 @@
 <!--
-  Generated template for the FindPage page.
+  Generated template for the CustomSearchResultsPage page.
 
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-navbar primary *navbar>
-  <ion-title>Find</ion-title>
+<ion-navbar *navbar>
+  <ion-title>Custom Search Results</ion-title>
 </ion-navbar>
 
-<ion-content class="find">
-  <ion-searchbar [(ngModel)]="searchQuery" (input)="getItems($event)" hideCancelButton></ion-searchbar>
-  <ion-item>
-    <p text-center>Enter a search term, or</p>
-    <button item-right clear secondary (click)="customSearch()">make a custom search</button>
-  </ion-item>
+<ion-content padding class="custom-search-results">
   <ion-card *ngFor="#listing of items">
     <ion-item>
       <ion-thumbnail item-left (click)="showImages()">

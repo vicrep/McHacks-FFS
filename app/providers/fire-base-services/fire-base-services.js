@@ -1,5 +1,4 @@
 import {Injectable} from 'angular2/core';
-import {Http} from 'angular2/http';
 
 /*
  Generated class for the FireBaseServices provider.
@@ -9,21 +8,21 @@ import {Http} from 'angular2/http';
  */
 @Injectable()
 export class FireBaseServices {
-    constructor(http: Http) {
-        this.http = http;
+    constructor() {
         this.data = null;
         this.userEmail = null;
         this.firebaseUrl = "https://ffsdb.firebaseio.com/";
         this.dbRef = new Firebase(this.firebaseUrl);
         this.usersRef = this.dbRef.child("users");
         this.itemsRef = this.dbRef.child("items");
-        this.offersRef = this.dbRef.child("ofers");
+        this.offersRef = this.dbRef.child("offers");
         this.user = this.dbRef.getAuth();
         this.mylistings = [];
         this.myconfirmedlistings = [];
         this.myinactivelistings = [];
         this.toprecentItems = [];
         this.myOffers = [];
+        this.listingoffers = [];
         if (this.user) this.initQueries();
     }
 
@@ -109,19 +108,16 @@ export class FireBaseServices {
         this.itemsRef.child(itemKey).on('value', snapshot=> {
             let data = snapshot.val();
             if (data["bestoffer"] < price){
-                console.log(data["bestoffer"]);
                 this.itemsRef.child(itemKey).update({"bestoffer" : price});
             }
         });
     }
     initQueries() {
         this.usersRef.orderByChild('email').equalTo(this.user.password.email).on('value', snapshot => {
-            console.log('user data callback');
             let data = snapshot.val();
             this.userData = data[Object.keys(data)[0]];
         });
         this.itemsRef.orderByChild('seller').equalTo(this.user.password.email).on('value', snapshot => {
-            console.log('items data callback');
             this.mylistings=[];
             this.myconfirmedlistings = [];
             this.myinactivelistings = [];
@@ -135,7 +131,6 @@ export class FireBaseServices {
             });
         });
           this.itemsRef.orderByChild('date').limitToFirst(40).on('value', snapshot => {
-            console.log('home items data callback');
             let data = snapshot.val();
             this.toprecentItems=[];
             snapshot.forEach(dataChild => {
@@ -151,13 +146,34 @@ export class FireBaseServices {
 //             }
 //             this.toprecentItems=data;
 
-            console.log(data);
         });
         this.offersRef.orderByChild('date').equalTo(this.user.password.email).on('value', snapshot => {
-            console.log('offers callback');
             let data = snapshot.val();
             this.myOffers=data;
-            console.log(data);
+        });
+
+    }
+    getListingOffers(offerKey) {
+        this.listingoffers = [];
+        this.offersRef.orderByChild('itemkey').equalTo(offerKey).on('value', snapshot => {
+            snapshot.forEach(dataChild => {
+                this.listingoffers.unshift(dataChild);
+            });
+        })
+
+    }
+    acceptOffer(offer, key) {
+        let listing = this.itemsRef.child(key);
+        this.usersRef.orderByChild('email').equalTo(offer.val().buyer).on('value', snapshot => {
+            let data = snapshot.val();
+            let buyerinfo = data[Object.keys(data)[0]];
+            listing.update({
+                'finaloffer': {
+                    price: offer.val().offerprice,
+                    name: buyerinfo.name,
+                    phone: buyerinfo.phone
+                }
+            })
         });
     }
 }
