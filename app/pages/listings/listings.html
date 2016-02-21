@@ -16,13 +16,13 @@
     <ion-item-sliding *ngFor="#listing of fbdb.mylistings">
       <ion-item>
         <ion-thumbnail item-left>
-          <img src="assets/vacuum1.jpg">
+          <img src="listing.val().img">
         </ion-thumbnail>
-        <h2>{{listing.title}}</h2>
-        <p>Started {{listing.date}}</p>
+        <h2>{{listing.val().title}}</h2>
+        <p>Started {{listing.val().date}}</p>
         <div item-right>
-          <p text-right>Asking offer: ${{listing.askingprice}}</p>
-          <p text-right>Best offer: ${{listing.bestoffer}}</p>
+          <p text-right>Asking offer: ${{listing.val().askingprice}}</p>
+          <p text-right>Best offer: ${{listing.val().bestoffer}}</p>
           <p text-right><ion-icon name="people"></ion-icon> 3</p>
         </div>
       </ion-item>

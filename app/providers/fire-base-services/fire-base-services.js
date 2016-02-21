@@ -20,6 +20,8 @@ export class FireBaseServices {
         this.offersRef = this.dbRef.child("ofers");
         this.user = this.dbRef.getAuth();
         this.mylistings = [];
+        this.myconfirmedlistings = [];
+        this.myinactivelistings = [];
         this.toprecentItems = [];
         this.myOffers = [];
         if (this.user) this.initQueries();
@@ -83,6 +85,7 @@ export class FireBaseServices {
         let d = new Date();
         let n = d.toLocaleString();
         this.itemsRef.push().set({
+            active: true,
             title : data.itemname,
             category : data.category ,
             askingprice : data.initialprice,
@@ -99,7 +102,7 @@ export class FireBaseServices {
         this.offersRef.push().set({
             offerprice : price,
             itemkey : itemKey ,
-            buyer : this.user.password.email
+            buyer : this.user.password.email,
             date : n
         });
         //update the best offer of the item 
@@ -120,8 +123,15 @@ export class FireBaseServices {
         this.itemsRef.orderByChild('seller').equalTo(this.user.password.email).on('value', snapshot => {
             console.log('items data callback');
             this.mylistings=[];
+            this.myconfirmedlistings = [];
+            this.myinactivelistings = [];
             snapshot.forEach(dataChild => {
-                this.mylistings.push(dataChild.val());
+                let val = dataChild.val();
+                if (val.active) {
+                    if(val.finaloffer) this.myconfirmedlistings.push(dataChild);
+                    else this.mylistings.push(dataChild);
+                }
+                else this.myinactivelistings.push(dataChild);
             });
         });
           this.itemsRef.orderByChild('date').limitToFirst(40).on('value', snapshot => {
@@ -129,7 +139,7 @@ export class FireBaseServices {
             let data = snapshot.val();
             this.toprecentItems=[];
             snapshot.forEach(dataChild => {
-                  this.toprecentItems.push(dataChild);
+                if (dataChild.val().active) this.toprecentItems.push(dataChild);
           });
 
 
@@ -150,6 +160,5 @@ export class FireBaseServices {
             console.log(data);
         });
     }
-
 }
 
