@@ -177,16 +177,21 @@ export class FireBaseServices {
     }
     acceptOffer(offer, key) {
         let listing = this.itemsRef.child(key);
+        let sellerinfo = null;
         this.usersRef.orderByChild('email').equalTo(offer.val().buyer).on('value', snapshot => {
             let data = snapshot.val();
             let buyerinfo = data[Object.keys(data)[0]];
             listing.update({
                 'finaloffer': {
                     price: offer.val().offerprice,
-                    name: buyerinfo.name,
-                    phone: buyerinfo.phone
+                    buyername: buyerinfo.name,
+                    buyerphone: buyerinfo.phone,
+                    sellername: this.userData.name,
+                    sellerphone: this.userData.phone
                 }
-            })
+            });
         });
+
+        
     }
 }
