@@ -19,6 +19,7 @@ export class FireBaseServices {
         this.itemsRef = this.dbRef.child("items");
         this.user = this.dbRef.getAuth();
         this.mylistings = [];
+        this.toprecentItems = [];
         if (this.user) this.initQueries();
     }
 
@@ -113,12 +114,12 @@ export class FireBaseServices {
             let data = snapshot.val();
             this.mylistings=data;
             console.log(data);
-            // for (i = 0; i < Object.keys(data).length; i++) { 
-            //     this.mylistings.push(data[Object.keys(data)[i]]);
-            //     console.log(data[Object.keys(data)[i]]);
-            // }
-            // console.log(data[Object.keys(data)[1]]);
-            // this.userData = data[Object.keys(data)[0]];
+        });
+          this.itemsRef.orderByChild('date').limitToFirst(40).on('value', snapshot => {
+            console.log('home items data callback');
+            let data = snapshot.val();
+            this.toprecentItems=data;
+            console.log(data);
         });
     }
 
