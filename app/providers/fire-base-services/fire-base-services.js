@@ -17,11 +17,13 @@ export class FireBaseServices {
         this.dbRef = new Firebase(this.firebaseUrl);
         this.usersRef = this.dbRef.child("users");
         this.itemsRef = this.dbRef.child("items");
-        this.offersRef = this.dbRef.child("ofers");
+        this.offersRef = this.dbRef.child("offers");
         this.user = this.dbRef.getAuth();
         this.mylistings = [];
         this.toprecentItems = [];
         this.myOffers = [];
+        this.myOffersItems = [];
+        this.tempItem = null;
         if (this.user) this.initQueries();
     }
 
@@ -83,6 +85,7 @@ export class FireBaseServices {
         let d = new Date();
         let n = d.toLocaleString();
         this.itemsRef.push().set({
+            active : true, 
             title : data.itemname,
             category : data.category ,
             askingprice : data.initialprice,
@@ -90,16 +93,17 @@ export class FireBaseServices {
             seller : this.user.password.email,
             bestoffer : 0,
             date : n,
-            img: data.img
+            img: data.img, 
         });
     }
     addOffer(price, itemKey){
         let d = new Date();
         let n = d.toLocaleString();
         this.offersRef.push().set({
+            active : true,
             offerprice : price,
             itemkey : itemKey ,
-            buyer : this.user.password.email
+            buyer : this.user.password.email,
             date : n
         });
         //update the best offer of the item 
@@ -111,6 +115,33 @@ export class FireBaseServices {
             }
         });
     }
+    editOffer(price, offerKey){
+        //update the best offer of the item 
+            this.offersRef.child(offerKey).update({"offerprice" : price});
+    }
+    deleteOffer(offerKey){
+        //update the best offer of the item 
+            this.offersRef.child(offerKey).remove();
+    }
+    acceptOffer(offerKey){
+        let item = this.offersRef.child(offerKey).itemkey;
+        this.offersRef.orderByChild('itemkey').equalTo(item).on('value', snapshot => {
+            snapshot.forEach(dataChild => {
+                if(dataChild.key()!=offerKey){
+                    dataChild.update({"active" : false});
+                }
+            });
+        });
+
+    }
+    getItem(itemKey){
+          this.itemsRef.child(itemKey).on('value', snapshot=> {
+            this.tempItem = snapshot.val();
+        });
+        return this.tempItem;
+    }
+    
+
     initQueries() {
         this.usersRef.orderByChild('email').equalTo(this.user.password.email).on('value', snapshot => {
             console.log('user data callback');
@@ -143,11 +174,17 @@ export class FireBaseServices {
 
             console.log(data);
         });
-        this.offersRef.orderByChild('date').equalTo(this.user.password.email).on('value', snapshot => {
+        this.offersRef.orderByChild('buyer').equalTo(this.user.password.email).on('value', snapshot => {
             console.log('offers callback');
             let data = snapshot.val();
-            this.myOffers=data;
             console.log(data);
+
+            this.myOffers=[];
+            snapshot.forEach(dataChild => {
+                  if(dataChild.val().active==true){
+                  this.myOffers.push(dataChild);
+              }
+          });
         });
     }
 

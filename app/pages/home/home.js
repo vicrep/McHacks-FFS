@@ -41,8 +41,8 @@ export class HomePage {
     prompt.addButton({
       text: 'Save',
       handler: data => {
-        this.fbdb.addOffer(data.amount, item);
-        console.log('Saved clicked');
+      this.fbdb.addOffer(data.amount, item);
+      console.log('Saved clicked');
       }
     });
     this.nav.present(prompt);

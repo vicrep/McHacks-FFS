@@ -12,22 +12,22 @@
   <ion-card>
     <ion-list>
       <ion-list-header>Successful Offers</ion-list-header>
-      <ion-item>
+      <ion-item >
         <h2>Broom <span primary>$5</span></h2>
         <p>Posted by V. Repkow</p>
         <button item-right secondary><ion-icon name="call"></ion-icon> Contact Seller</button>
       </ion-item>
     </ion-list>
   </ion-card>
-  <ion-card>
+  <ion-card *ngFor="#listing of fbdb.myOffers;">
     <ion-item>
       <ion-thumbnail item-left (click)="showImages()">
         <img src="assets/vacuum1.jpg">
       </ion-thumbnail>
-      <h2><b>Vacuum Cleaner</b></h2>
+      <h2><b>{{fbdb.getItem(listing.val().itemkey).title}}</b></h2>
       <p>Posted by V. Repkow</p>
       <div item-right text-right>
-        <h2>$20 (OBO)</h2>
+        <h2>{{fbdb.getItem(listing.val().itemkey).askingprice}} (OBO)</h2>
         <p>(4.7 <ion-icon name="star"></ion-icon>)</p>
       </div>
     </ion-item>
@@ -35,13 +35,13 @@
       <p>Brand new vaccum, great condition, barely used. Sucks the shit out of anything.</p>
     </ion-card-content>
     <ion-item>
-      <p item-left>Highest offer: $20</p>
+      <p item-left>Highest offer: ${{fbdb.getItem(listing.val().itemkey).bestoffer}}</p>
       <p text-center><ion-icon name="people"> 3</ion-icon></p>
-      <p item-right>My offer: $25</p>
+      <p item-right>My offer: ${{listing.val().offerprice}}</p>
     </ion-item>
     <ion-item>
-      <button item-left clear secondary (click)="editBid('Vacuum Cleaner')"><ion-icon name="arrow-dropup"></ion-icon> Edit my offer</button>
-      <button item-right clear danger><ion-icon name="close"></ion-icon> Cancel my offer</button>
+      <button item-left clear secondary (click)="editBid(listing.key())"><ion-icon name="arrow-dropup"></ion-icon> Edit my offer</button>
+      <button item-right clear danger (click)="fbdb.deleteOffer(listing.key())"><ion-icon name="close"></ion-icon> Cancel my offer</button>
     </ion-item>
   </ion-card>
 </ion-content>

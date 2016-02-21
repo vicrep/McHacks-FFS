@@ -1,4 +1,6 @@
 import {Page, NavController, NavParams} from 'ionic-framework/ionic';
+import {FireBaseServices} from '../../providers/fire-base-services/fire-base-services';
+
 
 /*
   Generated class for the ListingOffersPage page.
@@ -10,9 +12,8 @@ import {Page, NavController, NavParams} from 'ionic-framework/ionic';
   templateUrl: 'build/pages/listing-offers/listing-offers.html',
 })
 export class ListingOffersPage {
-  constructor(nav: NavController, params: NavParams) {
+    constructor(nav: NavController, FireBaseServices: FireBaseServices) {
     this.nav = nav;
-    this.params = params;
-    this.offers = this.params.get('offers');
+    this.fbdb = FireBaseServices;
   }
 }

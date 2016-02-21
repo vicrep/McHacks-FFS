@@ -1,4 +1,6 @@
 import {Page, NavController, Alert} from 'ionic-framework/ionic';
+import {FireBaseServices} from '../../providers/fire-base-services/fire-base-services';
+
 
 /*
   Generated class for the BidsPage page.
@@ -10,8 +12,9 @@ import {Page, NavController, Alert} from 'ionic-framework/ionic';
   templateUrl: 'build/pages/bids/bids.html',
 })
 export class BidsPage {
-  constructor(nav: NavController) {
+    constructor(nav: NavController, FireBaseServices: FireBaseServices) {
     this.nav = nav;
+    this.fbdb = FireBaseServices;
   }
 
   editBid(item) {
@@ -35,8 +38,11 @@ export class BidsPage {
       text: 'Save',
       handler: data => {
         console.log('Saved clicked');
+        this.fbdb.editOffer(data.amount, item);
       }
     });
     this.nav.present(prompt);
   }
+
+
 }
