@@ -8,14 +8,12 @@
   <ion-title>New Listing</ion-title>
 </ion-navbar>
 
-<ion-toolbar secondary position="bottom">
-  <ion-title text-center>Create new listing</ion-title>
-</ion-toolbar>
-
 <ion-content class="new-listing">
+  <form #newlistingForm="ngForm" novalidate>
+
   <ion-list>
     <ion-item>
-      <ion-segment secondary [(ngModel)]="data.listingType">
+      <ion-segment secondary [(ngModel)]="newlisting.listingType" ngControl="listingType"  #listingType="ngForm" required>
         <ion-segment-button value="free">
           Free
         </ion-segment-button>
@@ -26,15 +24,15 @@
     </ion-item>
     <ion-item>
       <ion-label>Item name</ion-label>
-      <ion-input type="text"></ion-input>
+      <ion-input [(ngModel)]="newlisting.itemname" ngControl="itemname" type="text" #itemname="ngForm" required></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>Item Description</ion-label>
-      <ion-textarea placeholder="max 240 characters"></ion-textarea>
+      <ion-textarea [(ngModel)]="newlisting.description" ngControl="description" type="text" #description="ngForm" required placeholder="max 240 characters"></ion-textarea>
     </ion-item>
     <ion-item>
       <ion-label>Item type</ion-label>
-        <ion-select [(ngModel)]="data.category">
+        <ion-select [(ngModel)]="newlisting.category" ngControl="category"  #category="ngForm" required >
           <ion-option value="clothing">Clothing</ion-option>
           <ion-option value="books">Books</ion-option>
           <ion-option value="furniture">Furniture</ion-option>
@@ -43,13 +41,18 @@
           <ion-option value="others">Others</ion-option>
         </ion-select>
     </ion-item>
-    <ion-item *ngIf="data.listingType == 'sale'">
+    <ion-item *ngIf="newlisting.listingType == 'sale'">
       <ion-label>Item price</ion-label>
-      <ion-input type="currency"></ion-input>
+      <ion-input [(ngModel)]="newlisting.initialprice" ngControl="initialprice" type="currency" #initialprice="ngForm" required ></ion-input>
     </ion-item>
-    <ion-item *ngIf="data.listingType == 'sale'">
+    <ion-item *ngIf="newlisting.listingType == 'sale'">
       <ion-label>This item is OBO</ion-label>
-      <ion-toggle secondary [(ngModel)]="data.obo"></ion-toggle>
+      <ion-toggle secondary [(ngModel)]="newlisting.obo" ngControl="obo"  #obo="ngForm" required ></ion-toggle>
     </ion-item>
-  </ion-list>
+    </ion-list>
+    <div padding>
+      <button block (click)="onAddingItem(newlistingForm)">Sign Up</button>
+    </div>
+  </form>
+  
 </ion-content>

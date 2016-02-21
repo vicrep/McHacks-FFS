@@ -12,14 +12,11 @@ export class FireBaseServices {
     constructor(http: Http) {
         this.http = http;
         this.data = null;
+        this.userEmail = null;
         this.firebaseUrl = "https://ffsdb.firebaseio.com/";
         this.dbRef = new Firebase(this.firebaseUrl);
         this.usersRef = this.dbRef.child("users");
-        this.booksRef = this.dbRef.child("books");
-        this.clothesRef = this.dbRef.child("clothes");
-        this.furnitureRef = this.dbRef.child("furniture");
-        this.appliancesRef = this.dbRef.child("appliances");
-        this.electronicsRef = this.dbRef.child("electronics");
+        this.itemsRef = this.dbRef.child("items");
         this.user = this.dbRef.getAuth();
     }
 
@@ -34,6 +31,7 @@ export class FireBaseServices {
                     console.log("Error logging user:", error);
                     reject();
                 } else {
+                    this.userEmail = emailV;
                     console.log("Successfully logged user with uid:", userData.uid);
                     resolve();
                 }
@@ -67,6 +65,30 @@ export class FireBaseServices {
 
     signOut() {
         this.dbRef.unauth();
+    }
+
+    addItem(title, category, intitialPrice, isBid, description){
+        this.itemsRef.push().set({
+            title : title,
+            category : category ,
+            intitialPrice : intitialPrice,
+            isBid : isBid,
+            description : description,
+            seller : this.userEmail
+        });
+    }
+    addFreeItem(title, category, description){
+        this.itemsRef.push().set({
+            title : title,
+            category : category ,
+            intitialPrice : 0,
+            isBid : false,
+            description : description,
+            seller : this.userEmail
+        });
+    }
+    getMyListings(){
+        
     }
 
 }
