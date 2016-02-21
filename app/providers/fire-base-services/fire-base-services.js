@@ -142,10 +142,10 @@ export class FireBaseServices {
             snapshot.forEach(dataChild => {
                 let val = dataChild.val();
                 if (val.active) {
-                    if(val.finaloffer) this.myconfirmedlistings.push(dataChild);
-                    else this.mylistings.push(dataChild);
+                    if(val.finaloffer) this.myconfirmedlistings.unshift(dataChild);
+                    else this.mylistings.unshift(dataChild);
                 }
-                else this.myinactivelistings.push(dataChild);
+                else this.myinactivelistings.unshift(dataChild);
             });
         });
           this.itemsRef.orderByChild('date').limitToFirst(40).on('value', snapshot => {
@@ -155,7 +155,7 @@ export class FireBaseServices {
                 if (dataChild.val().active) this.toprecentItems.push(dataChild);
           });
         });
-        
+
         this.offersRef.orderByChild('buyer').equalTo(this.user.password.email).on('value', snapshot => {
             let data = snapshot.val();
             this.myOffers=[];

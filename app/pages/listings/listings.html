@@ -13,12 +13,15 @@
   <ion-list>
     <ion-list-header>
       <h3>Confirmed listings</h3>
-      <ion-note text-center>(Slide listings for options)</ion-note>
     </ion-list-header>
     <ion-item *ngIf="fbdb.myconfirmedlistings.length == 0"><p>No confirmed listings</p></ion-item>
     <ion-item *ngFor="#listing of fbdb.myconfirmedlistings">
       <h2>{{listing.val().title}} <span primary>${{listing.val().finaloffer.price}}</span></h2>
-      <a button item-right secondary [href]="'tel:' + listing.val().finaloffer.phone"><ion-icon name="call"></ion-icon> Contact Seller</a>
+      <a button secondary [href]="'tel:' + listing.val().finaloffer.phone"><ion-icon name="call"></ion-icon> Contact Seller</a>
+      <div item-right>
+        <h2><ion-icon name="contact"></ion-icon> {{listing.val().finaloffer.name}}</h2>
+        <button primary (click)="endListing(listing.key())"><ion-icon name="checkmark"></ion-icon> End Listing</button>
+      </div>
     </ion-item>
     <ion-list-header>
       <h3>Active Listings</h3>
@@ -50,5 +53,5 @@
         </button>
       </ion-item-options>
     </ion-item-sliding>
- </ion-list>
+  </ion-list>
 </ion-content>

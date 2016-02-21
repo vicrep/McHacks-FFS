@@ -22,7 +22,9 @@
 </ion-toolbar>
 
 <ion-content class="home">
-  <ion-card *ngFor="#listing of fbdb.toprecentItems;">
+  <div *ngFor="#listing of fbdb.toprecentItems">
+  <ion-card *ngIf="(listingType == 'free' && listing.val().askingprice == 0)
+            ||(listingType == 'forsale' && listing.val().askingprice > 0)||(listingType == 'all')">
     <ion-item>
       <ion-thumbnail item-left (click)="showImages()">
         <img [src]="listing.val().img">
@@ -44,4 +46,5 @@
       <button item-right clear secondary (click)="makeBid(listing.key())" [disabled]="listing.val().seller == fbdb.user.password.email"><ion-icon name="arrow-dropup"></ion-icon> Make an offer</button>
     </ion-item>
   </ion-card>
+  </div>
 </ion-content>

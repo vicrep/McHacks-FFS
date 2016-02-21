@@ -47,4 +47,7 @@ export class HomePage {
     });
     this.nav.present(prompt);
   }
+  onSegmentChanged() {
+
+  }
 }
