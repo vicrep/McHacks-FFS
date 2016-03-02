@@ -1,4 +1,4 @@
-import {App, Platform} from 'ionic-framework/ionic';
+import {App, Platform} from 'ionic-framework';
 import {Inject, Iterable} from 'angular2/core';
 import {LoginPage} from './pages/login/login';
 import {MainViewPage} from './pages/main-view/main-view';

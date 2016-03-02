@@ -1,4 +1,4 @@
-import {Page, NavController, Alert} from 'ionic-framework/ionic';
+import {Page, NavController, Alert} from 'ionic-framework';
 import {FireBaseServices} from '../../providers/fire-base-services/fire-base-services';
 
 /*

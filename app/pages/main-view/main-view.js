@@ -1,4 +1,4 @@
-import {NavController, Page} from 'ionic-framework/ionic';
+import {NavController, Page} from 'ionic-framework';
 import {HomePage} from '../home/home';
 import {FindPage} from '../find/find';
 import {BidsPage} from '../bids/bids';

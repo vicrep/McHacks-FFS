@@ -1,4 +1,4 @@
-import {Page, NavController} from 'ionic-framework/ionic';
+import {Page, NavController} from 'ionic-framework';
 import {NewListingPage} from '../new-listing/new-listing';
 import {ListingOffersPage} from '../listing-offers/listing-offers';
 import {FireBaseServices} from '../../providers/fire-base-services/fire-base-services';

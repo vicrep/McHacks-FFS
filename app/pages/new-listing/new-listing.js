@@ -1,4 +1,4 @@
-import {Page, NavController} from 'ionic-framework/ionic';
+import {Page, NavController} from 'ionic-framework';
 import {FireBaseServices} from '../../providers/fire-base-services/fire-base-services';
 import {Camera} from 'ionic-native/dist';
 

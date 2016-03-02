@@ -35,7 +35,7 @@
   <ion-card *ngFor="#listing of fbdb.myOffers;">
     <ion-item>
       <ion-thumbnail item-left (click)="showImages()">
-        <img src="assets/vacuum1.jpg">
+        <img [src]="fbdb.getItem(listing.val().itemkey).img">
       </ion-thumbnail>
       <h2><b>{{fbdb.getItem(listing.val().itemkey).title}}</b></h2>
       <p>Posted by V. Repkow</p>
